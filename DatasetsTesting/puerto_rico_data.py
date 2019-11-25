@@ -17,61 +17,82 @@ import rasterio.warp
 
 
 
-img_name = "DatasetsTesting/Puerto_Rico_Biomass.img"
-output_filename = 'image1.png'
-
 def print_stats(ds):
+    """
+    Prints statistics about the given dataset
+    """
     print("Dataset Name: " + ds.name)
     print("Dataset Mode: " + ds.mode)
     print("Band Count: " + str(ds.count))
     print("Dataset Width: " + str(ds.width))
     print("Dataset Height: " + str(ds.height))
-    print("Dataset Bounds: ", dataset.bounds)
-    print("Dataset Transform: ", dataset.transform)
-    ul = dataset.transform * (0, 0)
+    print("Dataset Bounds: ", ds.bounds)
+    print("Dataset Transform: ", ds.transform)
+    ul = ds.transform * (0, 0)
     print("Upper Left Corner: ", ul)
-    lr = dataset.transform * (dataset.width, dataset.height)
+    lr = ds.transform * (ds.width, ds.height)
     print("Lower Right Corner: ", lr)
-    {i: dtype for i, dtype in zip(dataset.indexes, dataset.dtypes)}
+    {i: dtype for i, dtype in zip(ds.indexes, ds.dtypes)}
 
-dataset = rasterio.open(img_name)
-height = dataset.height
-width = dataset.width
-# print_stats(dataset)
 
-band1 = dataset.read(1)
-# Display.
-plt.imshow(band1, cmap = "gray")
-plt.savefig(output_filename)
-plt.show()
+def img_to_df(img_name, 
+        max_lat, 
+        min_lat,
+        max_long,
+        min_long
+    ):
+    """
+    Given a path to a .img file, will return a pandas dataframe with (lat, long, biomass).
+    max_lat, min_lat, max_long, min_long correspond to North, South, East, West respectively.
+    """
 
-# Goal: Build table of (latitude, longitude, pixel value) tuples
+    # read in the image
+    dataset = rasterio.open(img_name)
 
-data = band1
-max_lat = 18.5542 # North
-min_lat = 17.7694 # South
+    # band1 contains the biomass data we are interested in
+    band1 = dataset.read(1) 
+    data = band1
 
-max_long = -65.13 # East Border
-min_long = -67.3228 # West Border
-diff_x = max_long - min_long
-print(diff_x/width)
-longitude_delta = diff_x/929
+    height = dataset.height
+    width = dataset.width
+    
+    # longitude_delta is the length of each pixel in the x direction
+    diff_long = max_long - min_long
+    longitude_delta = diff_long / width
 
-diff_y = max_lat - min_lat
-print(diff_y/height)
-latitude_delta = diff_y/349
-lat = 18.5542
-long = -67.3228
-lat_long_data = []
-for x in range(0, 929):
-    lat = 18.5542 # Set longitude to far North (Top)
-    for y in range(0, 349):
-        bm = data[y, x]
-        # coord_biomass = coord_biomass.append({'latitude': lat, 'longitude': long, 'biomass':bm}, ignore_index=True)
-        lat_long_data.append([lat, long, bm])
-        lat = lat - latitude_delta
-    long = long + longitude_delta
-coord_biomass = pd.DataFrame(data=lat_long_data, columns=['latitude', 'longitude', 'biomass'])
+    # latitude_delta is the length of each pixel in the y direction
+    diff_lat = max_lat - min_lat
+    latitude_delta = diff_lat / height
+
+
+    # loop over all the pixels in the map
+    lat = max_lat
+    long = min_long
+    lat_long_data = []
+    for x in range(0, width):
+        lat = max_lat # Set longitude to far North (Top)
+        for y in range(0, height):
+            bm = data[y, x] # get the biomass at this lat, long
+            lat_long_data.append([lat, long, bm]) 
+            lat = lat - latitude_delta
+        long = long + longitude_delta
+
+    # convert to a dataframe, and return
+    return pd.DataFrame(data=lat_long_data, columns=['latitude', 'longitude', 'biomass'])
+
+
+INPUT_IMG = "DatasetsTesting/Puerto_Rico_Biomass.img"
+OUTPUT_CSV = 'PR_Biomass_Coordinates_Dataset.csv'
+
+# The bounding box data can be gotten from the data download link, 
+# searching for: North_Bounding_Coordinate, etc.
+
+coord_biomass = img_to_df(
+    INPUT_IMG,
+    18.5542, # North
+    17.7694, # South
+    -65.13, # East Border
+    -67.3228 # West Border,
+)
+
 coord_biomass.to_csv('PR_Biomass_Coordinates_Dataset.csv', index=False)
-
-display(coord_biomass[coord_biomass['biomass'] > 0])

@@ -5,17 +5,6 @@ import rasterio
 import rasterio.features
 import rasterio.warp
 
-# ****Uncomment this next section see the dataset ****
-# df = pd.read_csv('PR_Biomass_Coordinates_Dataset.csv', index_col=False)
-# df_biomass_exists = df[df['biomass'] > 0]
-# display(df_biomass_exists)
-# t1 = len(df)
-# t2 = len(df_biomass_exists)
-# pct = t2 / t1
-# pct = (pct * 100)
-# print(str(pct) + "% of the map contains biomass")
-
-
 
 def print_stats(ds):
     """
@@ -79,20 +68,3 @@ def img_to_df(img_name,
 
     # convert to a dataframe, and return
     return pd.DataFrame(data=lat_long_data, columns=['latitude', 'longitude', 'biomass'])
-
-
-INPUT_IMG = "DatasetsTesting/Puerto_Rico_Biomass.img"
-OUTPUT_CSV = 'PR_Biomass_Coordinates_Dataset.csv'
-
-# The bounding box data can be gotten from the data download link, 
-# searching for: North_Bounding_Coordinate, etc.
-
-coord_biomass = img_to_df(
-    INPUT_IMG,
-    18.5542, # North
-    17.7694, # South
-    -65.13, # East Border
-    -67.3228 # West Border,
-)
-
-coord_biomass.to_csv('PR_Biomass_Coordinates_Dataset.csv', index=False)

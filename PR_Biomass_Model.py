@@ -23,10 +23,11 @@ data = df[['avg_red', 'avg_green', 'avg_blue', 'biomass']]
 # display(distinct_bms)
 
 s = 0
-for temp_bm in data[data['biomass'] != 0]['biomass']:
+all_nonzero_bms = data[data['biomass'] != 0]['biomass']
+for temp_bm in all_nonzero_bms:
     s = s + temp_bm
-avg = s / len(distinct_bms)
-print("Average Biomass: " + str(avg))
+avg = s / len(all_nonzero_bms)
+print("Average Biomass of Areas with Biomass > 0.0: " + str(avg))
 
 # Populate a numpy array of RGB values with associated biomass
 data_arr = np.zeros((num_rows, 4), dtype=np.float64)
@@ -60,9 +61,9 @@ print('row_divide: ', row_divide)
 X_train = X[0:row_divide, 0:3]
 Y_train = Y[0:row_divide, 0:1]
 print("X_train")
-display(X_train)
+# display(X_train)
 print("Y_train")
-display(Y_train)
+# display(Y_train)
 
 X_test = X[row_divide:num_rows, 0:3]
 Y_test = Y[row_divide:num_rows, 0:1]

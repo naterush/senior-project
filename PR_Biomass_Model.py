@@ -19,10 +19,11 @@ df = pd.read_csv('PuertoRico_Biomass_AvgRGB.csv')
 num_rows = len(df)
 
 data = df[['avg_red', 'avg_green', 'avg_blue', 'biomass']]
-distinct_bms = df[['biomass']].drop_duplicates()
-display(distinct_bms)
+# distinct_bms = df[['biomass']].drop_duplicates()
+# display(distinct_bms)
+
 s = 0
-for temp_bm in distinct_bms['biomass']:
+for temp_bm in data[data['biomass'] != 0]['biomass']:
     s = s + temp_bm
 avg = s / len(distinct_bms)
 print("Average Biomass: " + str(avg))
@@ -72,29 +73,43 @@ linreg = linreg.fit(X_train, Y_train)
 
 Y_predictions = linreg.predict(X_test)
 preds = []
+pct_errors = []
 for i in range(0, len(Y_test)):
     actual_bm = Y_test[i]
     predicted_bm = Y_predictions[i]
     # Difference between predicted biomass and actual biomass FOR ALL POINTS
     diff = abs(actual_bm - predicted_bm)
     # Difference between prediction and actual biomass FOR POINTS WITHOUT BIOMASS
-    ignore_zeros_diff = 0 if (actual_bm == 0.0) else diff
+    # ignore_zeros_diff = 0 if (actual_bm == 0.0) else diff
     # Difference between prediction and actual biomass FOR POINTS WITH TRUE BIOMASS
-    ignore_actual_bm_diff = 0 if (actual_bm != 0.0) else diff
+    # ignore_actual_bm_diff = 0 if (actual_bm != 0.0) else diff
     # Prediction error as percentage from true value
-    preds.append([actual_bm, predicted_bm, diff, ignore_zeros_diff, ignore_actual_bm_diff])
+    pct_error = 0.0
+    if actual_bm != 0.0:
+        err = abs(actual_bm-predicted_bm)/actual_bm
+        pct_errors.append(err)
+    # preds.append([actual_bm, predicted_bm, diff, ignore_zeros_diff, ignore_actual_bm_diff, pct_error])
+    preds.append([actual_bm, predicted_bm, diff])
 
 pred_arr = np.array(preds)
 
 avg_error_overall = pred_arr[:, 2].mean()
-avg_error_true_zeros = pred_arr[:, 3].mean()
-avg_error_non_zeros = pred_arr[:, 4].mean()
+print("Average error overall (Tonnes/Hectare): " + str(avg_error_overall))
 
-print("Average error overall: " + str(avg_error_overall))
-print("Average error on areas with 0 measured biomass: " + str(avg_error_true_zeros))
-print("Average error on areas with non-zero biomass: " + str(avg_error_non_zeros))
+# pct_errors_arr = np.array([n[3] for n in pred_arr if n[1] != 0.0])
+pct_errors_arr = np.array(pct_errors)
+print(pct_errors_arr)
+avg_pct_error = pct_errors_arr.mean()
+print("avg_pct_error: ", avg_pct_error)
 
-# avg_error_overall
+
+# avg_error_true_zeros = pred_arr[:, 3].mean()
+# print("Average error on areas with 0 measured biomass: " + str(avg_error_true_zeros))
+
+# avg_error_non_zeros = pred_arr[:, 4].mean()
+# print("Average error on areas with non-zero biomass: " + str(avg_error_non_zeros))
+
+# Calculate the percentage error among predictions over points WITH TRUE BIOMASS
 
 
 # Train a decision tree model on the training data

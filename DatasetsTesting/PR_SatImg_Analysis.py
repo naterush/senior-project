@@ -8,65 +8,6 @@ import rasterio.features
 import rasterio.warp
 
 
-def print_stats(ds):
-    """
-    Prints statistics about the given dataset
-    """
-    print("Dataset Name: " + ds.name)
-    print("Dataset Mode: " + ds.mode)
-    print("Band Count: " + str(ds.count))
-    print("Dataset Width: " + str(ds.width))
-    print("Dataset Height: " + str(ds.height))
-    print("Dataset Bounds: ", ds.bounds)
-    print("Dataset Transform: ", ds.transform)
-    ul = ds.transform * (0, 0)
-    print("Upper Left Corner: ", ul)
-    lr = ds.transform * (ds.width, ds.height)
-    print("Lower Right Corner: ", lr)
-    {i: dtype for i, dtype in zip(ds.indexes, ds.dtypes)}
-
-def img_to_df(img_name, max_lat, min_lat, max_long, min_long):
-    """
-    Given a path to a .img file, will return a pandas dataframe with (lat, long, biomass).
-    max_lat, min_lat, max_long, min_long correspond to North, South, East, West respectively.
-    """
-
-    # read in the image
-    dataset = rasterio.open(img_name)
-
-    # band1 contains the biomass data we are interested in
-    band1 = dataset.read(1)
-    data = band1
-
-    height = dataset.height
-    width = dataset.width
-
-    # longitude_delta is the length of each pixel in the x direction
-    diff_long = max_long - min_long
-    longitude_delta = diff_long / width
-
-    # latitude_delta is the length of each pixel in the y direction
-    diff_lat = max_lat - min_lat
-    latitude_delta = diff_lat / height
-
-
-    # loop over all the pixels in the map
-    lat = max_lat
-    long = min_long
-    lat_long_data = []
-    for x in range(0, width):
-        lat = max_lat # Set longitude to far North (Top)
-        for y in range(0, height):
-            bm = data[y, x] # get the biomass at this lat, long
-            if bm > 0:
-                print(str(lat) + " " + str(long) + " " + str(bm))
-            lat_long_data.append([lat, long, bm])
-            lat = lat - latitude_delta
-        long = long + longitude_delta
-
-    # convert to a dataframe, and return
-    return pd.DataFrame(data=lat_long_data, columns=['latitude', 'longitude', 'biomass'])
-
 # north_latitude = float(18.3) + float(1442) / float(2925)
 north_latitude = 18.792991452991455
 # south_latitude = north_latitude - (float(3312) / float(2925))
@@ -161,43 +102,91 @@ bounded_bm_df = bm_df[(bm_df['latitude'] < north_latitude) \
 # display(bounded_bm_df[:3])
 
 biomass_df = bounded_bm_df.reset_index()
-r_vals = []
-g_vals = []
-b_vals = []
 time = datetime.now()
+
+image = sat_image
+shape = image.shape
+print(shape)
+width = shape[1]
+height = shape[0]
+# DEBUGGING Image from RGB vals
+test_image = np.zeros((3312, 4800, 3), dtype=int)
+subpic_width = 2
+
 l = []
 n = len(biomass_df)
 for i in range(0, n):
-    # if i > 10:
-    #     break
-    if i % 100 == 0:
-        # new_time = datetime.now()
-        # d = new_time - time
-        # print(str(d) + 'ms')
-        # time = new_time
+    if i % 10000 == 0:
         print(str(i) + '/' + str(n))
     lat = biomass_df.loc[i, 'latitude']
     long = biomass_df.loc[i, 'longitude']
     bm = biomass_df.loc[i, 'biomass']
-    # print('lat: ', lat)
-    # print('long: ', long)
-    # print('bm: ', bm)
-    (x, y) = closest_pixel(lat, long, dims, borders)
-    if x == -1:
+
+    n_lat = borders[0]
+    s_lat = borders[1]
+    e_long = borders[2]
+    w_long = borders[3]
+    if long < w_long or long > e_long:
+        # print("Error, longitude not in bounds, ", long)
         continue
-    (r, g, b) = average_rgb(sat_image, x, y, 5)
+    if lat < s_lat or lat > n_lat:
+        # print("Error, latitude not in bounds, ", lat)
+        continue
+
+    x_diff = long - w_long
+    y_diff = n_lat - lat
+
+    x_pxls = (x_diff/(e_long - w_long)) * width
+    y_pxls = (y_diff/(n_lat - s_lat)) * height
+    (x, y) = (int(x_pxls // 1), int(y_pxls // 1))
+    # print('(x, y): '+str(x)+','+str(y))
+    if x == -1 or y == -1:
+        continue
+    # (r, g, b) = average_rgb(sat_image, x, y, 5)
+
+
+
+    left_x = x - subpic_width
+    if left_x < 0:
+        left_x = 0
+
+    right_x = x + subpic_width
+    if right_x >= width:
+        right_x = width - 1
+
+    top_y = y - subpic_width
+    if top_y < 0:
+        top_y = 0
+
+    bottom_y = y + subpic_width
+    if bottom_y >= height:
+        bottom_y = height - 1
+    # subpic = image[top_y:bottom_y, left_x:right_x]
+    # r_avg = np.average(subpic[:, :, 0])
+    # g_avg = np.average(subpic[:, :, 1])
+    # b_avg = np.average(subpic[:, :, 2])
+    r_avg = np.average(image[top_y:bottom_y, left_x:right_x, 0])
+    g_avg = np.average(image[top_y:bottom_y, left_x:right_x, 1])
+    b_avg = np.average(image[top_y:bottom_y, left_x:right_x, 2])
+
+    (r, g, b) = (int(r_avg), int(g_avg), int(b_avg))
+    test_image[y, x, 0] = r
+    test_image[y, x, 1] = g
+    test_image[y, x, 2] = b
+
     # print('Lat: ' + str(lat) + " Long: " + str(long) + " ==> ("+str(x)+', '+str(y)+") with avg RGB (" + str(r)+','+str(g)+','+str(b)+')')
-    r_vals.append(r)
-    g_vals.append(g)
-    b_vals.append(b)
     l.append({'latitude':lat, 'longitude':long, 'biomass':bm, 'avg_red':r, 'avg_green':g, 'avg_blue':b})
 
 biomass_avg_rgb_df = pd.DataFrame(data=l)
-# biomass_df['average_red'] = r_vals
-# biomass_df['average_green'] = g_vals
-# biomass_df['average_blue'] = b_vals
-# biomass_avg_rgb_df.to_csv(index_label=False)
+# print('saving csv')
+biomass_avg_rgb_df.to_csv('PuertoRico_Biomass_AvgRGB.csv', index_label=False)
 
-display(biomass_avg_rgb_df[:10])
+plt.imshow(test_image)
+plt.show()
+
+# plt.imshow(image)
+# plt.show()
+
+# display(biomass_avg_rgb_df[biomass_avg_rgb_df['biomass'] != 0])
 
 # average_rgb(data, 100, 100, 5)

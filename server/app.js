@@ -30,12 +30,18 @@ dummyjsonFile = {
   }
 };
 
+
+
 function getJSONData(point, radius) {
   return dummyjsonFile;
 }
 
 app.get('/', function (req, res) {
-  res.render('index.html');
+  res.render('map.html');
+});
+
+app.get('/sapling', function (req, res) {
+  res.render('sapling.ejs.html');
 });
 
 app.get('/getRegion', function (req, res) {

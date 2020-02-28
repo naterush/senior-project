@@ -61,3 +61,31 @@ def get_auth_token(user, pw):
     return api_key
 
 api_token = get_auth_token(username, password)
+
+
+params_search = {
+	"datasetName": "L8",
+        "spatialFilter": {
+            "filterType": "mbr",
+            "lowerLeft": {
+                    "latitude": 44.60847,
+                    "longitude": -99.69639
+            },
+            "upperRight": {
+                    "latitude": 44.60847,
+                    "longitude": -99.69639
+            }
+        },
+        "temporalFilter": {
+            "startDate": "2014-01-01",
+            "endDate": "2014-12-01"
+        },
+	"apiKey": api_token
+}
+print("searching to datasets")
+response = requests.post('https://earthexplorer.usgs.gov/inventory/json/v/1.4.0/datasets',
+            data={'jsonRequest': json.dumps(params_search)})
+            
+response = response.json()
+
+print(response)

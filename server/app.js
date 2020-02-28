@@ -30,6 +30,16 @@ dummyjsonFile = {
   }
 };
 
+dummyjsonMap = {
+  "coordinates" : [
+    {"latitude": "40.416775",
+     "longitude": "-3.70379",
+      "color": "GREEN"}, 
+
+    {"latitude": "55.378051",
+    "longitude": "-3.435973",
+    "color": "RED"}]
+};
 
 
 function getJSONData(point, radius) {

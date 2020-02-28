@@ -1,5 +1,0 @@
-rasterio==1.1.1
-matplotlib
-pandas
-landsatxplore
-sklearn

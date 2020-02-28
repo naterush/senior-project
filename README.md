@@ -6,9 +6,11 @@ We are doing a senior project.
 
 # SETUP:
 
+To run the model:
+
 ```
 git clone https://github.com/naterush/senior-project.git;
-cd senior-project;
+cd senior-project/model;
 virtualenv env;
 source env/bin/activate;
 pip install -r requirements.txt;

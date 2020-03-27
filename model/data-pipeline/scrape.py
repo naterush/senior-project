@@ -16,6 +16,11 @@ from pathlib import Path
 username = 'ejperelmuter'
 password = 'Simbacat3471'
 
+lat = 39.952583
+long = -75.165222
+
+datasets = ['LANDSAT_TM_C1', 'LANDSAT_ETM_C1', 'LANDSAT_8_C1']
+
 
 class Scene():
 
@@ -32,6 +37,8 @@ class Scene():
         tar_file = list(self.folder_path.iterdir())[0]
         with tarfile.open(tar_file, "r:gz") as mytar:
             mytar.extractall(path=self.folder_path)
+
+        print(f"Extracted in {self.folder_path}")
         
         # delete the tar file
         os.remove(tar_file)
@@ -86,7 +93,6 @@ def lat_long():
     lats = np.fromfile("lats.txt")
     return longs, lats
 
-    
 
 class LandsatAPI(object):
 
@@ -99,13 +105,19 @@ class LandsatAPI(object):
         output_folder = Path(output_folder)
 
         scenes = self.landsat_api.search(
-            dataset='LANDSAT_ETM_C1',
+            dataset=datasets[2],
             latitude=lat,
             longitude=long,
-            start_date='1995-01-01',
+            start_date='2018-01-01',
             end_date='2019-01-01',
-            max_cloud_cover=10
+            max_cloud_cover=1000
         )
+        print(scenes)
+        print("Number found scenes" + str(len(scenes)))
+
+        for scene in scenes:
+            print(scene['acquisitionDate'])
+
         entity_id = scenes[0]['entityId']
         summary_id = scenes[0]["summary"].split(",")[0].split(":")[1][1:]
         
@@ -121,23 +133,18 @@ class LandsatAPI(object):
         return Scene(output_folder / summary_id)
 
 
-#api = LandsatAPI()
-#d = api.download(34.885931, -79.804688)
-scene = Scene(Path("./downloaded_sat_data/LE07_L1TP_016036_19990719_20161003_01_T1"))
-scene.test()
-#longs, lats = lat_long()
-#print(longs)
-#print(lats)
-
+api = LandsatAPI()
+d = api.download(34.885931, -79.804688)
+d.extract()
+#scene = Scene(Path("./downloaded_sat_data/LE07_L1TP_016036_19990719_20161003_01_T1"))
+#scene.test()
 exit(1)
+
+"""
+OLD CODE, NOT SURE IF WE NEED!
 
 with tarfile.open('./downloaded_sat_data/LE07_L1TP_016036_19990719_20161003_01_T1.tar.gz', "r:gz") as mytar:
     mytar.extractall(path="downloaded_sat_data/LE07_L1TP_016036_19990719_20161003_01_T1")
-    """
-    for m in mytar.getnames():
-        if m.endswith(".TIF"):
-            mytar.extract(m, path="downloaded_sat_data/LE07_L1TP_016036_19990719_20161003_01_T1")
-    """
 
 for file_name in os.listdir("downloaded_sat_data/LE07_L1TP_016036_19990719_20161003_01_T1"):
     if file_name.endswith(".TIF"):
@@ -145,3 +152,7 @@ for file_name in os.listdir("downloaded_sat_data/LE07_L1TP_016036_19990719_20161
         im = Image.open("downloaded_sat_data/LE07_L1TP_016036_19990719_20161003_01_T1/" + file_name)
         im.show()
 
+api = LandsatAPI()
+d = api.download(lat, long)
+
+"""

@@ -2,3 +2,4 @@ env
 .vscode/
 .DS_Store
 model/data-pipeline/downloaded_sat_data/
+server/node_modules

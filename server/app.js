@@ -30,12 +30,28 @@ dummyjsonFile = {
   }
 };
 
+dummyjsonMap = {
+  "coordinates" : [
+    {"latitude": "40.416775",
+     "longitude": "-3.70379",
+      "color": "GREEN"}, 
+
+    {"latitude": "55.378051",
+    "longitude": "-3.435973",
+    "color": "RED"}]
+};
+
+
 function getJSONData(point, radius) {
   return dummyjsonFile;
 }
 
 app.get('/', function (req, res) {
-  res.render('index.html');
+  res.render('map.html');
+});
+
+app.get('/sapling', function (req, res) {
+  res.render('sapling.ejs.html');
 });
 
 app.get('/getRegion', function (req, res) {

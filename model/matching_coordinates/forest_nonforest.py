@@ -12,38 +12,6 @@ from pyproj import Proj, transform
 
 
 
-def coord_to_lat_long(x, y):
-    phi_0 = 23.000000 #  latitude for the origin of the Cartesian coordinates
-    lambda_0 =  -96.000000 #  longitude for the origin of the Cartesian coordinates
-
-    phi_0 = 51.652084
-    lambda_0 = -127.977889
-
-    phi_1 = 29.50
-    phi_2 = 45.50
-
-    phi_0 = math.radians(phi_0)
-    lambda_0 = math.radians(lambda_0)
-    phi_1 = math.radians(phi_1)
-    phi_2 = math.radians(phi_2)
-
-    n = (1/2)*(math.sin(phi_1) + math.sin(phi_2))
-    C = (math.cos(phi_1)**2) + (2*n*math.sin(phi_1))
-    p_0 = (sqrt(C - (2 * n * math.sin(phi_0)))) / n
-
-    p = sqrt((x)**2 + (p_0-y)**2)
-    theta = math.atan(x/(p_0-y))
-
-    x = (C - ((p**2)*(n**2)))/(2*n)
-    print(x)
-    calculated_lat = math.asin(x)
-    calculated_long = lambda_0 + (theta/n)
-    a = math.degrees(calculated_lat)
-    b = math.degrees(calculated_long)
-    return (a, b)
-    # return (calculated_lat, calculated_long)
-# l = coord_to_lat_long(1, 1)
-
 
 # read in the image
 forest_nonforest_img = '/Users/ethanperelmuter/Desktop/senior-project(GitHub)/model/matching_coordinates/conus_forest_nonforest.img'

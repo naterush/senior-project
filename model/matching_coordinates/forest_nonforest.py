@@ -1,4 +1,3 @@
-from datetime import datetime
 import matplotlib.pyplot as plt
 from matplotlib import image
 import numpy as np
@@ -6,11 +5,8 @@ import rasterio
 import rasterio.features
 import rasterio.warp
 import pandas as pd
-import math
-from math import sqrt
+
 from pyproj import Proj, transform
-
-
 
 
 # read in the image
@@ -18,7 +14,6 @@ forest_nonforest_img = '/Users/ethanperelmuter/Desktop/senior-project(GitHub)/mo
 ds = rasterio.open(forest_nonforest_img)
 
 print("Dataset Name: " + ds.name)
-# print("Dataset Mode: " + ds.mode)
 # print("Band Count: " + str(ds.count))
 width = ds.width
 height = ds.height
@@ -55,17 +50,6 @@ left = -2361625
 right = 2263375
 bottom = 262875
 top = 3177625
-
-h = top - bottom
-print(h)
-print(h/250)
-# print((top - bottom) / 250)
-# print(height)
-# print((right - left)/250)
-# print(width)
-
-
-# x2,y2 = transform(inProj,outProj,x1,y1)
 
 # curr_x = -2229109 # Should iterate --> 2145923.51
 # curr_y = 3556313

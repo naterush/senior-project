@@ -39,7 +39,7 @@ class Scene():
             mytar.extractall(path=self.folder_path)
 
         print(f"Extracted in {self.folder_path}")
-        
+
         # delete the tar file
         os.remove(tar_file)
 
@@ -55,7 +55,7 @@ class Scene():
                     return Path(path)
 
         return None
-    
+
     def test(self):
         band_1 = self.tif_path_from_band(1)
 
@@ -105,12 +105,12 @@ class LandsatAPI(object):
         self.ee_api.logout()
 
     def download(
-            self, 
-            lat, 
-            long, 
+            self,
+            lat,
+            long,
             output_folder="downloaded_sat_data",
             dataset='LANDSAT_8_C1',
-            start_date='2018-01-01', 
+            start_date='2018-01-01',
             end_date='2019-01-01',
             num_scenes=1 # the number of scenes to grab, starting from the first
         ):
@@ -135,7 +135,7 @@ class LandsatAPI(object):
 
             print(f"Entity ID {entity_id}, Summary ID {summary_id}")
             scene_objs.append(summary_id)
-            
+
             # make the output directory if it doesn't exist
             if not output_folder.exists():
                 output_folder.mkdir()
@@ -149,7 +149,7 @@ class LandsatAPI(object):
 
         return scene_objs
 
-
+print('Getting Landsat API instance')
 api = LandsatAPI()
 d = api.download(34.885931, -79.804688, num_scenes=21)
 api.logout()

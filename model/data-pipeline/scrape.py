@@ -14,7 +14,7 @@ from PIL import Image
 from pathlib import Path
 
 username = 'ejperelmuter'
-password = 'Simbacat3471'
+password = 'Sapling#2020'
 
 lat = 39.952583
 long = -75.165222

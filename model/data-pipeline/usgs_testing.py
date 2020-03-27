@@ -3,7 +3,7 @@ import requests
 import json
 
 username = 'ejperelmuter'
-password = 'Simbacat3471'
+password = 'Sapling#2020'
 auth_tup = (username, password)
 espa_host = 'https://espa.cr.usgs.gov/api/v1/'
 usgs_host = 'https://earthexplorer.usgs.gov/inventory/json/v/1.3.0/'
@@ -85,7 +85,7 @@ params_search = {
 print("searching to datasets")
 response = requests.post('https://earthexplorer.usgs.gov/inventory/json/v/1.4.0/datasets',
             data={'jsonRequest': json.dumps(params_search)})
-            
+
 response = response.json()
 
 print(response)

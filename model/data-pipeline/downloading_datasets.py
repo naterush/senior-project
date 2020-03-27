@@ -3,7 +3,7 @@ import requests
 import json
 
 username = 'ejperelmuter'
-password = 'Simbacat3471'
+password = 'Sapling#2020'
 auth_tup = (username, password)
 ee_base_url = 'https://earthexplorer.usgs.gov/inventory/json/'
 

@@ -7,7 +7,7 @@ import json
 # import urllib.request
 
 username = 'ejperelmuter'
-password = 'Simbacat3471'
+password = 'Sapling#2020'
 
 # Initialize a new API instance and get an access key
 # landsat_api = landsatxplore.api.API(username, password)

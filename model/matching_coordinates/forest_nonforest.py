@@ -74,7 +74,6 @@ height = len(data)
 width = len(data[0])
 
 
-
 inProj = Proj(init='epsg:5070')
 outProj = Proj(init='epsg:4269')
 curr_y = top

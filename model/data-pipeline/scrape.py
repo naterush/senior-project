@@ -100,41 +100,61 @@ class LandsatAPI(object):
         self.landsat_api = landsatxplore.api.API(username, password)
         self.ee_api = EarthExplorer(username, password)
 
-    def download(self, lat, long, output_folder="downloaded_sat_data"):
+    def logout(self):
+        self.landsat_api.logout()
+        self.ee_api.logout()
+
+    def download(
+            self, 
+            lat, 
+            long, 
+            output_folder="downloaded_sat_data",
+            dataset='LANDSAT_8_C1',
+            start_date='2018-01-01', 
+            end_date='2019-01-01',
+            num_scenes=1 # the number of scenes to grab, starting from the first
+        ):
         # convert the output_folder to a path, for easier handling
         output_folder = Path(output_folder)
 
         scenes = self.landsat_api.search(
-            dataset=datasets[2],
+            dataset=dataset,
             latitude=lat,
             longitude=long,
-            start_date='2018-01-01',
-            end_date='2019-01-01',
+            start_date=start_date,
+            end_date=end_date,
             max_cloud_cover=1000
         )
-        print(scenes)
         print("Number found scenes" + str(len(scenes)))
 
-        for scene in scenes:
-            print(scene['acquisitionDate'])
+        scene_objs = []
 
-        entity_id = scenes[0]['entityId']
-        summary_id = scenes[0]["summary"].split(",")[0].split(":")[1][1:]
-        
-        # make the output directory if it doesn't exist
-        if not output_folder.exists():
-            output_folder.mkdir()
+        for scene in scenes[0:min(num_scenes, len(scenes))]:
+            entity_id = scene['entityId']
+            summary_id = scene["summary"].split(",")[0].split(":")[1][1:]
 
-        # make an output folder for this specific scene
-        if not (output_folder / summary_id).exists():
-            (output_folder / summary_id).mkdir()
+            print(f"Entity ID {entity_id}, Summary ID {summary_id}")
+            scene_objs.append(summary_id)
+            
+            # make the output directory if it doesn't exist
+            if not output_folder.exists():
+                output_folder.mkdir()
 
-        self.ee_api.download(scene_id=entity_id, output_dir=output_folder / summary_id)
-        return Scene(output_folder / summary_id)
+            # make an output folder for this specific scene
+            if not (output_folder / summary_id).exists():
+                (output_folder / summary_id).mkdir()
+
+            self.ee_api.download(scene_id=entity_id, output_dir=output_folder / summary_id)
+            scene_objs.append(scene)
+
+        return scene_objs
 
 
 api = LandsatAPI()
-d = api.download(34.885931, -79.804688)
+d = api.download(34.885931, -79.804688, num_scenes=21)
+api.logout()
+for scene in d:
+    print(scene.folder_path)
 d.extract()
 #scene = Scene(Path("./downloaded_sat_data/LE07_L1TP_016036_19990719_20161003_01_T1"))
 #scene.test()

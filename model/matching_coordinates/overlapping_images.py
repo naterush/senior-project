@@ -56,7 +56,7 @@ start_x = int((left_x - ds.bounds.left)//250)
 end_x = int(start_x + ((right_x - left_x)//250))
 start_y = int((ds.bounds.top - top_y)//250)
 end_y = int(start_y + ((top_y - bottom_y)//250))
-
+print(end_y)
 forest_cover = band1[start_y:end_y, start_x:end_x]
 plt.imshow(forest_cover, cmap = "gray")
 

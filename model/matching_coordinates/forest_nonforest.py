@@ -31,10 +31,10 @@ print("Dataset Bounds: ", ds.bounds)
 band1 = ds.read(1)
 plt.imshow(band1, cmap = "gray")
 
-# a = 10384
-# b = 15480
-# florida = band1[a:a+40,b:b+40]
-# plt.imshow(florida, cmap = "gray", aspect='auto')
+a = 10384
+b = 15480
+florida = band1[a:a+40,b:b+40]
+plt.imshow(florida, cmap = "gray", aspect='auto')
 
 # y = top - (a*250)
 # print(y)

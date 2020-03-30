@@ -13,11 +13,6 @@ import numpy as np
 import PIL
 import pprint
 
-# https://spatialreference.org/ref/epsg/wgs-84/ --> EPSG 4326
-# username = 'ejperelmuter'
-# password = 'Sapling#2020'
-# landsat_api = landsatxplore.api.API(username, password)
-# print(landsat_api)
 
 # TODO: Get an optical image from USGS
 # TODO: Produce [Lat, Long, R, G, B] from it
@@ -29,12 +24,6 @@ fd = open(xml_metadata)
 metadata = xmltodict.parse(fd.read())
 fd.close()
 
-# bounds = metadata['ard_metadata']['tile_metadata']['global_metadata']['bounding_coordinates']
-# north = float(bounds['north'])
-# south = float(bounds['south'])
-# east = float(bounds['east'])
-# west = float(bounds['west'])
-# pprint.pprint(projection_bounds)
 
 # Open the satellite image
 img = PIL.Image.open(jpg_filepath)
@@ -67,41 +56,25 @@ start_x = int((left_x - ds.bounds.left)//250)
 end_x = int(start_x + ((right_x - left_x)//250))
 start_y = int((ds.bounds.top - top_y)//250)
 end_y = int(start_y + ((top_y - bottom_y)//250))
-plt.imshow(band1[start_y:end_y, start_x:end_x], cmap = "gray")
-p = band1[start_y:end_y, start_x:end_x]
-# print(p[500][500])
 
+forest_cover = band1[start_y:end_y, start_x:end_x]
+plt.imshow(forest_cover, cmap = "gray")
 
-print(start_x)
-print(end_x)
-print(ds.bounds.bottom)
-
-# TESTING
-# end_x = start_x + 5
-# end_y = start_y + 1
-# arr = []
-
-plt.imshow(rgb_data, cmap = "gray")
-plt.imshow(new_image, cmap = "gray")
 test_jpg = rgb_data.copy()
-plt.imshow(test_jpg, cmap = "gray")
+plt.imshow(test_jpg)
 
-c = 0
-print(c)
-for x in range(start_x, end_x):
-    for y in range(start_y, end_y):
-        is_forest = band1[y][x]
+jpg_width = width
+jpg_height = height
+for x in range(0, len(forest_cover[0])):
+    for y in range(0, len(forest_cover)):
+        jpg_x = ((x / (len(forest_cover[0])))*jpg_width)
+        jpg_y = ((y / (len(forest_cover)))*jpg_height)
+        # test_jpg[int(jpg_y), int(jpg_x)] = 255
 
-        aea_x = ds.bounds.left + (250*x)
-        aea_y = ds.bounds.top - (250*y)
+        is_forest = forest_cover[y, x]
+        # 3: Water, 2: Some cover,
+        if is_forest == 3:
+            test_jpg[int(jpg_y)-2:int(jpg_y)+2, int(jpg_x)-2:int(jpg_x)+2] = 255
+            # test_jpg[int(jpg_y), int(jpg_x)] = 255
 
-        # Get closest pixel
-        jpg_x = int((aea_x - left_x)//meters_per_pixel)
-        jpg_y = int((top_y - aea_y)//meters_per_pixel)
-        # print((jpg_x, jpg_y))
-        if jpg_y > 0 and jpg_x > 0:
-            c = c + 1
-            if is_forest == 3:
-                test_jpg[jpg_y][jpg_x] = 255
-
-        # arr.append(is_forest)
+plt.imshow(test_jpg)

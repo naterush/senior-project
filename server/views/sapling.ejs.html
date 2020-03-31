@@ -21,6 +21,45 @@
 		.f-item {
 			margin: 5px;
 		}
+
+		/* The Modal (background) */
+	.modal {
+	  display: none; /* Hidden by default */
+	  position: fixed; /* Stay in place */
+	  z-index: 1; /* Sit on top */
+	  left: 0;
+	  top: 0;
+	  width: 100%; /* Full width */
+	  height: 100%; /* Full height */
+	  overflow: auto; /* Enable scroll if needed */
+	  background-color: rgb(0,0,0); /* Fallback color */
+	  background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+	}
+
+	/* Modal Content/Box */
+	.modal-content {
+	  background-color: #fefefe;
+	  margin: 15% auto; /* 15% from the top and centered */
+	  padding: 20px;
+	  border: 1px solid #888;
+	  width: 80%; /* Could be more or less, depending on screen size */
+	}
+
+	/* The Close Button */
+	.close {
+	  color: #aaa;
+	  float: right;
+	  font-size: 28px;
+	  font-weight: bold;
+	}
+
+	.close:hover,
+	.close:focus {
+	  color: black;
+	  text-decoration: none;
+	  cursor: pointer;
+	}
+
 	</style>
 	
 	<script type="text/javascript" src="http://maps.google.com/maps/api/js?key=AIzaSyAhWogeZ5mswxqfmc_ZkG4Ty8DwSx9K2m4"></script>
@@ -30,8 +69,8 @@
 		var map;
       	var loadMap = function() {
 	        var myOptions = {
-	          center: new google.maps.LatLng(39.952335, -75.163789),
-	          zoom: 11,
+	          center: new google.maps.LatLng(37.55261717446411, -120.80429614812023),
+	          zoom: 6,
 	          mapTypeId: google.maps.MapTypeId.ROADMAP
 	    	};
         	map = new google.maps.Map(document.getElementById("map"), myOptions);
@@ -49,10 +88,65 @@
 			});
         	
       	};
+
+      	var wildfiresButton;
+      	var wildfiresButtonPress = function() {
+      		// wildfiresButton = document.getElementById("wildfiresButton");
+      		// wildfiresButton.addListener('click', () => { console.log('test log')});
+
+      		var wildfireOptions = {
+	          center: new google.maps.LatLng(37.55261717446411, -120.80429614812023),
+	          zoom: 6,
+	          mapTypeId: google.maps.MapTypeId.ROADMAP
+      		};
+
+      		map.setOptions(wildfireOptions);
+
+      	};
+
+      	var init = function() {
+
+      		loadMap();
+      		// testButtonPress();
+
+      	}
+
+
+      	var learnOpen = function() {
+
+      		var modal = document.getElementById("myModal");
+
+      		modal.style.display = "block";
+      	}
+
+      	var learnClose = function() {
+
+			var modal = document.getElementById("myModal");
+			modal.style.display = "none";
+
+
+      	}
+
+      	var florenceButtonPress = function() {
+
+      		var florenceOptions = {
+			// 34.2085° N, 77.7964° W
+			center: new google.maps.LatLng(77.7964, 34.2085),
+	        zoom: 6,
+	        mapTypeId: google.maps.MapTypeId.ROADMAP
+
+      		};
+
+	        map.setOptions(florenceOptions)
+
+
+      	}
       	
       	// Assign the 'onload' property of the main window to function loadMap()
 	  	// Thus, loadMap() called as soon as browser loads
-	    window.onload = loadMap;
+	    // window.onload = loadMap;
+	    // window.onload = wildfiresButton;
+	    window.onload = init;
       	
       	//Function to check if new markers need to be added/deleted
       	var refreshMap = function() {
@@ -81,6 +175,30 @@
 </head>
 <body>
 	<h1>Sapling Map</h1>
+	<div id="preset-table-div">
+		<table id="preset-table" border="1" style="margin-left:auto; margin-right:auto;">
+		    <thead>
+		      <tr>
+		          <th>Explore</th>
+		      </tr>
+		    </thead>
+		    <tbody>
+		       <tr> 
+		           <td>
+		           		<button id="wildfires-button" onclick="wildfiresButtonPress()">California Wildfires</button>
+		           </td>
+		           <td>
+		           		<button id="florence-button" onclick="florenceButtonPress()">Hurricane Florence</button>
+		           </td>
+		      </tr>
+			  <tr>
+			  	   <td>
+			  	   		<button id="learn-button" onclick="learnOpen()">Learn More</button>
+			  	   </td>
+			  </tr>
+		   </tbody>
+		</table>
+	</div>
 	<div id="map" style="width:800px;height:500px;"></div>
   <p> 
   <div class="form-title">
@@ -92,5 +210,16 @@
   </form>
   <p>
   <font color="blue"> <p><a href="/logout"> Logout</a>
+
+  <!-- The Modal -->
+<div id="myModal" class="modal">
+
+  <!-- Modal content -->
+  <div class="modal-content">
+    <span class="close" onclick="learnClose()">&times;</span>
+    <p>Sample California Wildfire learn text</p>
+  </div>
+
+</div>
 </body>
 </html>

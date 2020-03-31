@@ -102,6 +102,7 @@
 
       		map.setOptions(wildfireOptions);
 
+      		activePreset = "wildfire";
       	};
 
       	var init = function() {
@@ -111,19 +112,42 @@
 
       	}
 
+      	var activePreset = "wildfire";
+
+      	var activePresetModalName = function(activePreset) {
+
+      		if (activePreset == "wildfire") {
+      			console.log("successfully found preset wildfire");
+      			return "wildfire-modal";
+      		} else if (activePreset == "florence") {
+      			console.log("successfully found preset florence");
+      			return "florence-modal";
+      			
+      		}
+
+      	};
 
       	var learnOpen = function() {
 
-      		var modal = document.getElementById("myModal");
+      		var modalName = activePresetModalName(activePreset);
+
+      		var modal = document.getElementById(modalName);
 
       		modal.style.display = "block";
       	}
 
-      	var learnClose = function() {
+      	var wildfireClose = function() {
 
-			var modal = document.getElementById("myModal");
+			var modal = document.getElementById("wildfire-modal");
 			modal.style.display = "none";
 
+
+      	}
+
+      	var florenceClose = function() {
+
+      		var modal = document.getElementById("florence-modal");
+      		modal.style.display = "none";
 
       	}
 
@@ -138,9 +162,12 @@
       		};
 
 	        map.setOptions(florenceOptions)
-
+	        //change learn param
+	        activePreset = "florence";
 
       	}
+
+      	
       	
       	// Assign the 'onload' property of the main window to function loadMap()
 	  	// Thus, loadMap() called as soon as browser loads
@@ -179,7 +206,7 @@
 		<table id="preset-table" border="1" style="margin-left:auto; margin-right:auto;">
 		    <thead>
 		      <tr>
-		          <th>Explore</th>
+		          <th colspan="2">Explore</th>
 		      </tr>
 		    </thead>
 		    <tbody>
@@ -192,7 +219,7 @@
 		           </td>
 		      </tr>
 			  <tr>
-			  	   <td>
+			  	   <td colspan="2">
 			  	   		<button id="learn-button" onclick="learnOpen()">Learn More</button>
 			  	   </td>
 			  </tr>
@@ -211,13 +238,24 @@
   <p>
   <font color="blue"> <p><a href="/logout"> Logout</a>
 
-  <!-- The Modal -->
-<div id="myModal" class="modal">
+  <!-- California Wildfire Modal -->
+<div id="wildfire-modal" class="modal">
 
   <!-- Modal content -->
   <div class="modal-content">
-    <span class="close" onclick="learnClose()">&times;</span>
+    <span class="close" onclick="wildfireClose()">&times;</span>
     <p>Sample California Wildfire learn text</p>
+  </div>
+
+</div>
+
+  <!-- Hurricane Florence Modal -->
+<div id="florence-modal" class="modal">
+
+  <!-- Modal content -->
+  <div class="modal-content">
+    <span class="close" onclick="florenceClose()">&times;</span>
+    <p>Sample Hurricane Florence learn text</p>
   </div>
 
 </div>

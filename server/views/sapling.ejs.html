@@ -89,21 +89,58 @@
         	
       	};
 
-      	var wildfiresButton;
+      	//code for handling presets and "learn" modal]
+
+      	var activePresetModalName = "wildfire-modal";
+
       	var wildfiresButtonPress = function() {
-      		// wildfiresButton = document.getElementById("wildfiresButton");
-      		// wildfiresButton.addListener('click', () => { console.log('test log')});
 
       		var wildfireOptions = {
-	          center: new google.maps.LatLng(37.55261717446411, -120.80429614812023),
-	          zoom: 6,
-	          mapTypeId: google.maps.MapTypeId.ROADMAP
+		        center: new google.maps.LatLng(37.55261717446411, -120.80429614812023),
+		        zoom: 6,
+		        mapTypeId: google.maps.MapTypeId.ROADMAP
       		};
 
       		map.setOptions(wildfireOptions);
-
-      		activePreset = "wildfire";
+      		//change learn modal param
+      		activePresetModalName = "wildfire-modal";
       	};
+
+      	var florenceButtonPress = function() {
+
+      		var florenceOptions = {
+				center: new google.maps.LatLng(34.2085, -77.7964),
+		        zoom: 10,
+		        mapTypeId: google.maps.MapTypeId.ROADMAP
+
+      		};
+
+	        map.setOptions(florenceOptions)
+	        //change learn modal param
+	        activePresetModalName = "florence-modal";
+
+      	}
+
+      	//open the learn modal with last clicked preset. default calif wildfires
+      	var learnOpen = function() {
+      		var modal = document.getElementById(activePresetModalName);
+      		modal.style.display = "block";
+
+      	}
+
+      	//close wildfire modal
+      	var wildfireClose = function() {
+			var modal = document.getElementById("wildfire-modal");
+			modal.style.display = "none";
+
+      	}
+
+      	//close florence modal 
+      	var florenceClose = function() {
+      		var modal = document.getElementById("florence-modal");
+      		modal.style.display = "none";
+
+      	}
 
       	var init = function() {
 
@@ -111,68 +148,11 @@
       		// testButtonPress();
 
       	}
-
-      	var activePreset = "wildfire";
-
-      	var activePresetModalName = function(activePreset) {
-
-      		if (activePreset == "wildfire") {
-      			console.log("successfully found preset wildfire");
-      			return "wildfire-modal";
-      		} else if (activePreset == "florence") {
-      			console.log("successfully found preset florence");
-      			return "florence-modal";
-      			
-      		}
-
-      	};
-
-      	var learnOpen = function() {
-
-      		var modalName = activePresetModalName(activePreset);
-
-      		var modal = document.getElementById(modalName);
-
-      		modal.style.display = "block";
-      	}
-
-      	var wildfireClose = function() {
-
-			var modal = document.getElementById("wildfire-modal");
-			modal.style.display = "none";
-
-
-      	}
-
-      	var florenceClose = function() {
-
-      		var modal = document.getElementById("florence-modal");
-      		modal.style.display = "none";
-
-      	}
-
-      	var florenceButtonPress = function() {
-
-      		var florenceOptions = {
-			// 34.2085° N, 77.7964° W
-			center: new google.maps.LatLng(77.7964, 34.2085),
-	        zoom: 6,
-	        mapTypeId: google.maps.MapTypeId.ROADMAP
-
-      		};
-
-	        map.setOptions(florenceOptions)
-	        //change learn param
-	        activePreset = "florence";
-
-      	}
-
       	
       	
       	// Assign the 'onload' property of the main window to function loadMap()
 	  	// Thus, loadMap() called as soon as browser loads
 	    // window.onload = loadMap;
-	    // window.onload = wildfiresButton;
 	    window.onload = init;
       	
       	//Function to check if new markers need to be added/deleted

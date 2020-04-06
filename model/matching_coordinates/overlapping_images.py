@@ -16,8 +16,9 @@ import pprint
 
 # TODO: Get an optical image from USGS
 # TODO: Produce [Lat, Long, R, G, B] from it
-xml_metadata = 'model/matching_coordinates/sample_data/LT05_CU_028008_20080822_20181220_C01_V01.xml'
-jpg_filepath = 'model/matching_coordinates/sample_data/LT05_CU_028008_20080822_20181220_C01_V01.jpg'
+xml_metadata = 'model/matching_coordinates/sample_data/philly.xml'
+jpg_filepath = 'model/matching_coordinates/sample_data/philly.jpg'
+
 
 # Get the bounding coordinates
 fd = open(xml_metadata)
@@ -32,7 +33,6 @@ width = rgb_data.shape[0]
 height = rgb_data.shape[1]
 
 # Get the Albers Equal Area bounds of the satellite image
-
 projection_bounds = metadata['ard_metadata']['tile_metadata']['global_metadata']['projection_information']
 print(projection_bounds)
 left_x = float(projection_bounds['corner_point'][0]['@x'])
@@ -56,7 +56,6 @@ start_x = int((left_x - ds.bounds.left)//250)
 end_x = int(start_x + ((right_x - left_x)//250))
 start_y = int((ds.bounds.top - top_y)//250)
 end_y = int(start_y + ((top_y - bottom_y)//250))
-print(end_y)
 forest_cover = band1[start_y:end_y, start_x:end_x]
 plt.imshow(forest_cover, cmap = "gray")
 
@@ -65,10 +64,12 @@ plt.imshow(test_jpg)
 
 jpg_width = width
 jpg_height = height
-for x in range(0, len(forest_cover[0])):
-    for y in range(0, len(forest_cover)):
-        jpg_x = ((x / (len(forest_cover[0])))*jpg_width)
-        jpg_y = ((y / (len(forest_cover)))*jpg_height)
+max_x = len(forest_cover[0])
+max_y = len(forest_cover)
+for x in range(0, max_x):
+    for y in range(0, max_y):
+        jpg_x = ((x / max_x)*jpg_width)
+        jpg_y = ((y / max_y)*jpg_height)
         # test_jpg[int(jpg_y), int(jpg_x)] = 255
 
         is_forest = forest_cover[y, x]
@@ -77,4 +78,4 @@ for x in range(0, len(forest_cover[0])):
             test_jpg[int(jpg_y)-2:int(jpg_y)+2, int(jpg_x)-2:int(jpg_x)+2] = 255
             # test_jpg[int(jpg_y), int(jpg_x)] = 255
 
-plt.imshow(test_jpg)
+# plt.imshow(test_jpg)

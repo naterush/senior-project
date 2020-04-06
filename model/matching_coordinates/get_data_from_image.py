@@ -14,6 +14,15 @@ import PIL
 import math
 import pprint
 
+# Open the satellite image
+img = PIL.Image.open('model/matching_coordinates/sample_data/philly.jpg')
+# TODO: Check for errors in opening
+rgb_data = np.asarray(img)
+jpg_width = rgb_data.shape[0]
+jpg_height = rgb_data.shape[1]
+print(np.count_nonzero(rgb_data[0, 0]))
+plt.imshow(rgb_data, cmap = "gray")
+
 
 # This function generates [x_coord, y_coord, averageRed, averageGreen, averageBlue, forestCoverLabel]
 #  instances for the given satellite image
@@ -45,33 +54,41 @@ def generate_training_data(satellite_jpg_filepath, conus_data_filepath, ul_x, ul
     # plt.imshow(forest_cover, cmap = "gray")
 
     results = []
-    for x in range(0, len(forest_cover[0])):
+    max_x = len(forest_cover[0])
+    max_y = len(forest_cover)
+    for x in range(0, max_x):
         # Debugging
         if x % 10 == 0: print('On column ' + str(x) + '/600 of image')
 
-        for y in range(0, len(forest_cover)):
+        for y in range(0, max_y):
             # Get the appropriate coordinates within the JPG image
-            jpg_x = int(((x / (len(forest_cover[0])))*jpg_width))
-            jpg_y = int(((y / (len(forest_cover)))*jpg_height))
+            jpg_x = int(((x / max_x)*jpg_width))
+            jpg_y = int(((y / max_y)*jpg_height))
 
-            avgR = np.average(rgb_data[jpg_y-pixel_radius:jpg_y+pixel_radius,
-                                       jpg_x-pixel_radius:jpg_x+pixel_radius,
-                                       0])
-            avgG = np.average(rgb_data[jpg_y-pixel_radius:jpg_y+pixel_radius,
-                                       jpg_x-pixel_radius:jpg_x+pixel_radius,
-                                       1])
-            avgB = np.average(rgb_data[jpg_y-pixel_radius:jpg_y+pixel_radius,
-                                       jpg_x-pixel_radius:jpg_x+pixel_radius,
-                                       2])
-            # forest_image[y, x] = [int(avgR) if not math.isnan(avgR) else 0,
-            #                       int(avgG) if not math.isnan(avgG) else 0,
-            #                       int(avgB) if not math.isnan(avgB) else 0]
+            # Check if the coordinate is empty (true black) within the JPG
+            if np.count_nonzero(rgb_data[jpg_y, jpg_x]) == 0:
 
-            albers_x = ds.bounds.left + (250*(start_x+x))
-            albers_y = ds.bounds.top - (250*(start_y+y))
-            forest_label = forest_cover[y, x]
+                avgR = np.average(rgb_data[jpg_y-pixel_radius:jpg_y+pixel_radius,
+                                           jpg_x-pixel_radius:jpg_x+pixel_radius,
+                                           0])
+                avgG = np.average(rgb_data[jpg_y-pixel_radius:jpg_y+pixel_radius,
+                                           jpg_x-pixel_radius:jpg_x+pixel_radius,
+                                           1])
+                avgB = np.average(rgb_data[jpg_y-pixel_radius:jpg_y+pixel_radius,
+                                           jpg_x-pixel_radius:jpg_x+pixel_radius,
+                                           2])
+                # forest_image[y, x] = [int(avgR) if not math.isnan(avgR) else 0,
+                #                       int(avgG) if not math.isnan(avgG) else 0,
+                #                       int(avgB) if not math.isnan(avgB) else 0]
 
-            results.append([albers_x, albers_y, avgR, avgG, avgB, forest_label])
+                albers_x = ds.bounds.left + (250*(start_x+x))
+                albers_y = ds.bounds.top - (250*(start_y+y))
+                forest_label = forest_cover[y, x]
+
+                results.append([albers_x, albers_y, avgR, avgG, avgB, forest_label])
+            else:
+                print('there is zero (black) at '+str(y)+','+str(x))
+                dafs
 
 
     df = pd.DataFrame(columns=['albers_x', 'albers_y', 'avg_red', 'avg_green', 'avg_blue', 'forest_label'],
@@ -81,8 +98,9 @@ def generate_training_data(satellite_jpg_filepath, conus_data_filepath, ul_x, ul
 
 
 forest_nonforest_img = '/Users/ethanperelmuter/Desktop/senior-project(GitHub)/model/matching_coordinates/conus_forest_nonforest.img'
-xml_metadata = 'model/matching_coordinates/sample_data/LT05_CU_028008_20080822_20181220_C01_V01.xml'
-jpg_filepath = 'model/matching_coordinates/sample_data/LT05_CU_028008_20080822_20181220_C01_V01.jpg'
+xml_metadata = 'model/matching_coordinates/sample_data/norcal1.xml'
+jpg_filepath = 'model/matching_coordinates/sample_data/norcal1.jpg'
+
 # Get the bounding coordinates
 fd = open(xml_metadata)
 metadata = xmltodict.parse(fd.read())
@@ -91,10 +109,16 @@ fd.close()
 # Get the Albers Equal Area bounds of the satellite image
 projection_bounds = metadata['ard_metadata']['tile_metadata']['global_metadata']['projection_information']
 left_x = float(projection_bounds['corner_point'][0]['@x'])
-right_x = float(projection_bounds['corner_point'][1]['@x'])
 top_y = float(projection_bounds['corner_point'][0]['@y'])
+right_x = float(projection_bounds['corner_point'][1]['@x'])
 bottom_y = float(projection_bounds['corner_point'][1]['@y'])
 
 (df, forest_image) = generate_training_data(jpg_filepath, forest_nonforest_img, left_x, top_y, right_x, bottom_y)
-plt.imshow(forest_image, cmap = "gray")
-display(df.drop_na())
+# plt.imshow(forest_image, cmap = "gray")
+# display(df.dropna())
+#
+#
+# df = get_labeled_data('model/matching_coordinates/sample_data/philly.jpg',
+#                       'model/matching_coordinates/sample_data/philly.xml',
+#                       forest_nonforest_img)
+# display(df)

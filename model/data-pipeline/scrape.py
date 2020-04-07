@@ -12,9 +12,7 @@ from affine import Affine
 from pyproj import Proj, transform
 from PIL import Image
 from pathlib import Path
-
-username = 'ejperelmuter'
-password = 'Sapling#2020'
+import json
 
 lat = 39.952583
 long = -75.165222
@@ -24,17 +22,33 @@ datasets = ['LANDSAT_TM_C1', 'LANDSAT_ETM_C1', 'LANDSAT_8_C1']
 
 class Scene():
 
-    def __init__(self, folder_path):
+    def __init__(self, folder_path, scene_data=None):
+        if isinstance(folder_path, str):
+            folder_path = Path(folder_path)
+
         self.folder_path = folder_path
 
+        if scene_data is None:
+            # if this object is created directly from the folder path, 
+            # it must already be extracted, so we read scene data
+            with open(self.folder_path / "scene_data.txt", "r") as f:
+                self.scene_data = json.loads(f.read())
+        else:
+            self.scene_data = scene_data
+
+            # then we write the scene data
+            with open(self.folder_path / "scene_data.txt", "w+") as f:
+                f.write(json.dumps(self.scene_data))
+
+
     def extract(self):
-        if len(list(self.folder_path.iterdir())) > 1:
+        if len(list(self.folder_path.iterdir())) > 2:
             # we don't need to do anything if this was already extracted
             print("Already extracted! Returning.")
             return
 
         # extract the tar file
-        tar_file = list(self.folder_path.iterdir())[0]
+        tar_file = list(x for x in self.folder_path.iterdir() if x.suffix == ".gz")[0]
         with tarfile.open(tar_file, "r:gz") as mytar:
             mytar.extractall(path=self.folder_path)
 
@@ -42,6 +56,8 @@ class Scene():
 
         # delete the tar file
         os.remove(tar_file)
+
+        
 
     def tif_path_from_band(self, band_num):
         """
@@ -55,48 +71,11 @@ class Scene():
                     return Path(path)
 
         return None
-
-    def test(self):
-        band_1 = self.tif_path_from_band(1)
-
-        # Read raster
-        with rasterio.open(band_1) as r:
-            T0 = r.transform  # upper-left pixel corner affine transform
-            p1 = Proj(r.crs)
-            A = r.read()  # pixel values
-            print(f"T0: {T0}")
-            print(f"p1: {p1}")
-            print(f"A: {A}")
-
-        return
-
-        # All rows and columns
-        cols, rows = np.meshgrid(np.arange(A.shape[2]), np.arange(A.shape[1]))
-
-        # Get affine transform for pixel centres
-        T1 = T0 * Affine.translation(0.5, 0.5)
-        # Function to convert pixel row/column index (from 0) to easting/northing at centre
-        rc2en = lambda r, c: (c, r) * T1
-
-        # All eastings and northings (there is probably a faster way to do this)
-        eastings, northings = np.vectorize(rc2en, otypes=[np.float, np.float])(rows, cols)
-
-        # Project all longitudes, latitudes
-        p2 = Proj(proj='latlong' ,datum='WGS84')
-        longs, lats = transform(p1, p2, eastings, northings)
-        longs.tofile("longs.txt")
-        lats.tofile("lats.txt")
-
-
-def lat_long():
-    longs = np.fromfile("longs.txt")
-    lats = np.fromfile("lats.txt")
-    return longs, lats
-
+    
 
 class LandsatAPI(object):
 
-    def __init__(self):
+    def __init__(self, username="ejperelmuter", password="Sapling#2020"):
         self.landsat_api = landsatxplore.api.API(username, password)
         self.ee_api = EarthExplorer(username, password)
 
@@ -109,7 +88,7 @@ class LandsatAPI(object):
             lat,
             long,
             output_folder="downloaded_sat_data",
-            dataset='LANDSAT_8_C1',
+            dataset='LANDSAT_5',
             start_date='2018-01-01',
             end_date='2019-01-01',
             num_scenes=1 # the number of scenes to grab, starting from the first
@@ -129,13 +108,10 @@ class LandsatAPI(object):
 
         scene_objs = []
 
-        for scene in scenes[0:min(num_scenes, len(scenes))]:
-            entity_id = scene['entityId']
-            summary_id = scene["summary"].split(",")[0].split(":")[1][1:]
-
-            print(f"Entity ID {entity_id}, Summary ID {summary_id}")
-            scene_objs.append(summary_id)
-
+        for scene_data in scenes[0:min(num_scenes, len(scenes))]:
+            entity_id = scene_data['entityId']
+            summary_id = scene_data["summary"].split(",")[0].split(":")[1][1:]
+            
             # make the output directory if it doesn't exist
             if not output_folder.exists():
                 output_folder.mkdir()
@@ -145,34 +121,15 @@ class LandsatAPI(object):
                 (output_folder / summary_id).mkdir()
 
             self.ee_api.download(scene_id=entity_id, output_dir=output_folder / summary_id)
-            scene_objs.append(scene)
+            scene_obj = Scene(output_folder / summary_id, scene_data)
+            scene_objs.append(scene_obj)
 
         return scene_objs
 
-print('Getting Landsat API instance')
+
+
 api = LandsatAPI()
-d = api.download(34.885931, -79.804688, num_scenes=21)
+d = api.download(38.8375, 120.8958, num_scenes=1)
 api.logout()
 for scene in d:
-    print(scene.folder_path)
-d.extract()
-#scene = Scene(Path("./downloaded_sat_data/LE07_L1TP_016036_19990719_20161003_01_T1"))
-#scene.test()
-exit(1)
-
-"""
-OLD CODE, NOT SURE IF WE NEED!
-
-with tarfile.open('./downloaded_sat_data/LE07_L1TP_016036_19990719_20161003_01_T1.tar.gz', "r:gz") as mytar:
-    mytar.extractall(path="downloaded_sat_data/LE07_L1TP_016036_19990719_20161003_01_T1")
-
-for file_name in os.listdir("downloaded_sat_data/LE07_L1TP_016036_19990719_20161003_01_T1"):
-    if file_name.endswith(".TIF"):
-        Image.MAX_IMAGE_PIXELS = 220835761
-        im = Image.open("downloaded_sat_data/LE07_L1TP_016036_19990719_20161003_01_T1/" + file_name)
-        im.show()
-
-api = LandsatAPI()
-d = api.download(lat, long)
-
-"""
+    scene.extract()

@@ -22,15 +22,15 @@ warnings.filterwarnings("ignore")
 # Example instance produced in data: [averageR, averageG, averageB, conusLabel]
 def get_labeled_data(satellite_filepath, metadata_filepath, conus_data_filepath, pixel_radius=5):
 
-
     if satellite_filepath.endswith(".jpg"):
         satellite_jpg_filepath = satellite_filepath
     elif satellite_filepath.endswith(".TIF"):
         # we have to actually convert the .TIF to a .jpg
         satellite_jpg_filepath = satellite_filepath.replace("TIF", "jpg")
         im = PIL.Image.open(satellite_filepath)
-        out = im.convert("RGB")
-        out.save(satellite_jpg_filepath, "JPEG", quality=90)
+        rgbimg = PIL.Image.new("RGB", im.size)
+        rgbimg.paste(im)
+        rgbimg.save(satellite_jpg_filepath, 'JPEG')
 
     # Get the bounding coordinates from the metadata file
     if metadata_filepath.endswith(".xml"):
@@ -58,8 +58,8 @@ def get_labeled_data(satellite_filepath, metadata_filepath, conus_data_filepath,
     img = PIL.Image.open(satellite_jpg_filepath)
     # TODO: Check for errors in opening
     rgb_data = np.asarray(img)
-    jpg_width = rgb_data.shape[0]
-    jpg_height = rgb_data.shape[1]
+    jpg_width = rgb_data.shape[1]
+    jpg_height = rgb_data.shape[0]
 
     # Open the Conus/Non-Conus Dataset
     ds = rasterio.open(conus_data_filepath)
@@ -87,20 +87,27 @@ def get_labeled_data(satellite_filepath, metadata_filepath, conus_data_filepath,
                 continue
 
             # Get the appropriate coordinates within the JPG image
-            jpg_x = int(((x / max_x)*jpg_width))
-            jpg_y = int(((y / max_y)*jpg_height))
+            jpg_x = int(((x / max_x)*jpg_width))#, len(rgb_data[1] - 1))
+            jpg_y = int(((y / max_y)*jpg_height))#, len(rgb_data) - 1)
+
+            try:
+                np.count_nonzero(rgb_data[jpg_y, jpg_x])
+            except:
+                print(f"Error {y}, {max_y}, {jpg_height}")
+                print(rgb_data.shape)
 
             if np.count_nonzero(rgb_data[jpg_y, jpg_x]) != 0:
-                slice = rgb_data[jpg_y-pixel_radius:jpg_y+pixel_radius,
+                s = rgb_data[jpg_y-pixel_radius:jpg_y+pixel_radius,
                                  jpg_x-pixel_radius:jpg_x+pixel_radius]
-                                 
-                avgR = np.average(slice[:, :, 0])
+
+                avgR = np.average(s[:, :, 0])
+                
 
                 if np.isnan(avgR):
                     # Move onto next pixel if there are empty pixels in this radius
                     continue
-                avgG = np.average(slice[:, :, 1])
-                avgB = np.average(slice[:, :, 2])
+                avgG = np.average(s[:, :, 1])
+                avgB = np.average(s[:, :, 2])
                 albers_x = ds.bounds.left + (250*(start_x+x))
                 albers_y = ds.bounds.top - (250*(start_y+y))
 
@@ -159,8 +166,8 @@ files = ['philly']
 data = []
 #for location in files:
 r = get_labeled_data(
-    'downloaded_sat_data/LC08_L1TP_016036_20180104_20180118_01_T1/LC08_L1TP_016036_20180104_20180118_01_T1_B1.TIF',
-    'downloaded_sat_data/LC08_L1TP_016036_20180104_20180118_01_T1/LC08_L1TP_016036_20180104_20180118_01_T1_ANG.txt',
+    'downloaded_sat_data/LT05_L1TP_120033_20100123_20161017_01_T1/LT05_L1TP_120033_20100123_20161017_01_T1_B1.TIF',
+    'downloaded_sat_data/LT05_L1TP_120033_20100123_20161017_01_T1/LT05_L1TP_120033_20100123_20161017_01_T1_ANG.txt',
     forest_nonforest_img,
     pixel_radius=4
 )

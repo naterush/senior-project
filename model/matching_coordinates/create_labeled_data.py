@@ -73,6 +73,7 @@ def get_labeled_data(satellite_jpg_filepath, metadata_xml_filepath, conus_data_f
             if np.count_nonzero(rgb_data[jpg_y, jpg_x]) != 0:
                 slice = rgb_data[jpg_y-pixel_radius:jpg_y+pixel_radius,
                                  jpg_x-pixel_radius:jpg_x+pixel_radius]
+                print(f"Calculating average on {slice.size, slice.shape}")
                 avgR = np.average(slice[:, :, 0])
                 if np.isnan(avgR):
                     # Move onto next pixel if there are empty pixels in this radius

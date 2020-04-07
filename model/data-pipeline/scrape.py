@@ -88,8 +88,8 @@ class LandsatAPI(object):
             lat,
             long,
             output_folder="downloaded_sat_data",
-            dataset='LANDSAT_5',
-            start_date='2018-01-01',
+            dataset='LANDSAT_8_C1',
+            start_date='2010-01-01',
             end_date='2019-01-01',
             num_scenes=1 # the number of scenes to grab, starting from the first
         ):
@@ -129,7 +129,7 @@ class LandsatAPI(object):
 
 
 api = LandsatAPI()
-d = api.download(38.8375, 120.8958, num_scenes=1)
+d = api.download(38.8375, 120.8958, num_scenes=1, dataset="LANDSAT_TM_C1")
 api.logout()
 for scene in d:
     scene.extract()

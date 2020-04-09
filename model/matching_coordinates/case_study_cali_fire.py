@@ -19,11 +19,25 @@ import PIL
 import math
 import pprint
 import warnings
+import cv2
 warnings.filterwarnings("ignore")
 
-# a = np.zeros((10, 10))
-# a[:,:] = 1
-# print(a)
+# img = PIL.Image.open('model/matching_coordinates/case_study_data/walker_fire_before1.jpg')
+# rgb_data = np.asarray(img)
+# plt.imshow(rgb_data, cmap = "gray")
+
+
+def brighten_image(rgb_img_data, value = 30):
+    hsv = cv2.cvtColor(rgb_img_data, cv2.COLOR_BGR2HSV)
+    h, s, v = cv2.split(hsv)
+    lim = 255 - value
+    v[v > lim] = 255
+    v[v <= lim] += value
+    final_hsv = cv2.merge((h, s, v))
+    brightened_image = cv2.cvtColor(final_hsv, cv2.COLOR_HSV2BGR)
+    return brightened_image
+
+
 
 # Input: Takes in a JPG image with bounds given in an XML file, conus/non-conus map
 # Produces a np array of training data for only the colored portions of the image
@@ -101,7 +115,7 @@ def get_labeled_data(satellite_jpg_filepath, metadata_xml_filepath, conus_data_f
     print("Black percentage: " + str(((max_x*max_y) - row_num)/(max_x*max_y)))
     return all_results
 
-def create_prediction_map(model, satellite_jpg_filepath, metadata_xml_filepath, conus_data_filepath, pixel_radius=5):
+def create_prediction_map(model, satellite_jpg_filepath, metadata_xml_filepath, conus_data_filepath, pixel_radius=5, brighten_val=None):
     # Get the bounding coordinates from the metadata file
     fd = open(metadata_xml_filepath)
     metadata = xmltodict.parse(fd.read())
@@ -117,6 +131,8 @@ def create_prediction_map(model, satellite_jpg_filepath, metadata_xml_filepath, 
     # Open the satellite image
     img = PIL.Image.open(satellite_jpg_filepath)
     rgb_data = np.asarray(img)
+    if brighten_val != None:
+        rgb_data = brighten_image(rgb_data, brighten_val)
     jpg_width = rgb_data.shape[1]
     jpg_height = rgb_data.shape[0]
 
@@ -167,7 +183,7 @@ def create_prediction_map(model, satellite_jpg_filepath, metadata_xml_filepath, 
                 albers_y = ds.bounds.top - (250*(start_y+y))
 
                 # Predict here
-                pred = logreg.predict([[avgR, avgG, avgB]])
+                pred = model.predict([[avgR, avgG, avgB]])
                 prediction_map[y, x] = int(pred[0])
                 preds.append(pred[0])
                 actual_labels.append(forest_label)
@@ -181,7 +197,7 @@ def create_prediction_map(model, satellite_jpg_filepath, metadata_xml_filepath, 
 
 # Train on cali1-3 images, then run predictions on adam's
 forest_nonforest_img = 'model/matching_coordinates/conus_forest_nonforest.img'
-files = ['cali1', 'cali2', 'cali3', 'adam_cali']
+files = ['cali1', 'cali2', 'walker_fire_before1']
 # files = ['philly']
 data = []
 for location in files:
@@ -197,26 +213,29 @@ all_data = np.vstack(data_tuple)
 data_copy = all_data.copy()
 X = data_copy[:, :3]
 Y = data_copy[:, 3]
-# logreg = linear_model.LogisticRegression().fit(X, Y)
+logreg = linear_model.LogisticRegression().fit(X, Y)
 dt = tree.DecisionTreeClassifier().fit(X, Y)
 
-print("Creating map for before image")
+print("\nCreating map for before image")
 (fc_before, pred_map_before, preds_before, _) = create_prediction_map(dt,
-                    'model/matching_coordinates/case_study_data/walker_fire_before1.jpg',
-                     'model/matching_coordinates/case_study_data/walker_fire_before1.xml',
+                    'model/matching_coordinates/case_study_data/walker_fire_before2.jpg',
+                     'model/matching_coordinates/case_study_data/walker_fire_before2.xml',
                       forest_nonforest_img,
                       pixel_radius=4)
-print("Creating map for after image")
+print("\nCreating map for after image")
 (fc_after, pred_map_after, preds_after, _) = create_prediction_map(dt,
                     'model/matching_coordinates/case_study_data/walker_fire_after2.jpg',
                      'model/matching_coordinates/case_study_data/walker_fire_after2.xml',
                       forest_nonforest_img,
                       pixel_radius=4)
 
-plt.imshow(fc_before, cmap = "gray")
-plt.imshow(fc_after[300:500, 200:400], cmap = "gray")
-print(fc_after[400, 250])
+# plt.imshow(fc_before, cmap = "gray")
+# plt.imshow(fc_after[300:500, 200:400], cmap = "gray")
 plt.imshow(pred_map_before, cmap = "gray")
 plt.imshow(pred_map_after, cmap = "gray")
-plt.imshow(pred_map_before[300:500, 200:400], cmap = "gray")
-plt.imshow(pred_map_after[300:500, 200:400], cmap = "gray")
+# These lines crop around the fire area to show the difference in predictions
+# plt.imshow(pred_map_before[300:500, 200:400], cmap = "gray")
+# plt.imshow(pred_map_after[300:500, 200:400], cmap = "gray")
+
+
+# TODO: Smooth out the predictions to make map less dotty

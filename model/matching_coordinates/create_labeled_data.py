@@ -38,8 +38,8 @@ def get_labeled_data(satellite_jpg_filepath, metadata_xml_filepath, conus_data_f
     img = PIL.Image.open(satellite_jpg_filepath)
     # TODO: Check for errors in opening
     rgb_data = np.asarray(img)
-    jpg_width = rgb_data.shape[0]
-    jpg_height = rgb_data.shape[1]
+    jpg_width = rgb_data.shape[1]
+    jpg_height = rgb_data.shape[0]
 
     # Open the Conus/Non-Conus Dataset
     ds = rasterio.open(conus_data_filepath)
@@ -73,7 +73,7 @@ def get_labeled_data(satellite_jpg_filepath, metadata_xml_filepath, conus_data_f
             if np.count_nonzero(rgb_data[jpg_y, jpg_x]) != 0:
                 slice = rgb_data[jpg_y-pixel_radius:jpg_y+pixel_radius,
                                  jpg_x-pixel_radius:jpg_x+pixel_radius]
-                print(f"Calculating average on {slice.size, slice.shape}")
+                # print(f"Calculating average on {slice.size, slice.shape}")
                 avgR = np.average(slice[:, :, 0])
                 if np.isnan(avgR):
                     # Move onto next pixel if there are empty pixels in this radius
@@ -86,7 +86,7 @@ def get_labeled_data(satellite_jpg_filepath, metadata_xml_filepath, conus_data_f
                 results[row_num, 0] = avgR
                 results[row_num, 1] = avgG
                 results[row_num, 2] = avgB
-                results[row_num, 3] = forest_label
+                results[row_num, 3] = 1 if (forest_label == 1) else 0 
                 row_num = row_num + 1
 
     all_results = results[:row_num].copy()
@@ -133,7 +133,7 @@ def test_decisiontree_model(data, pct_train = 0.90):
 
 
 forest_nonforest_img = 'model/matching_coordinates/conus_forest_nonforest.img'
-files = ['norcal1', 'norcal2', 'philly']
+files = ['cali1', 'cali2', 'cali3','adam_cali']
 # files = ['philly']
 data = []
 for location in files:

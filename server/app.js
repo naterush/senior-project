@@ -74,13 +74,7 @@ var dummyMap =
 };
 
 
-
-
 app.get('/', function (req, res) {
-  res.render('map.html');
-});
-
-app.get('/sapling', function (req, res) {
   res.render('sapling.ejs.html');
 });
 

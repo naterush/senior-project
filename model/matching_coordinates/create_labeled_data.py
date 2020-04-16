@@ -15,6 +15,7 @@ import PIL
 import math
 import pprint
 import warnings
+import pickle
 warnings.filterwarnings("ignore")
 
 # Input: Takes in a JPG image with bounds given in an XML file, conus/non-conus map
@@ -86,7 +87,7 @@ def get_labeled_data(satellite_jpg_filepath, metadata_xml_filepath, conus_data_f
                 results[row_num, 0] = avgR
                 results[row_num, 1] = avgG
                 results[row_num, 2] = avgB
-                results[row_num, 3] = 1 if (forest_label == 1) else 0 
+                results[row_num, 3] = 1 if (forest_label == 1) else 0
                 row_num = row_num + 1
 
     all_results = results[:row_num].copy()
@@ -146,5 +147,29 @@ for location in files:
 data_tuple = tuple(data)
 all_data = np.vstack(data_tuple)
 
-test_logreg_model(all_data)
-test_decisiontree_model(all_data)
+data_copy = all_data.copy()
+np.random.shuffle(data_copy)
+y_val_idx = len(data_copy[0]) - 1
+cutoff = int(len(data_copy)*0.85)
+
+X_train = data_copy[:cutoff, :y_val_idx]
+Y_train = data_copy[:cutoff, y_val_idx]
+X_test = data_copy[cutoff:, :y_val_idx]
+Y_test = data_copy[cutoff:, y_val_idx]
+print("Training then testing Logistic Regression model on data")
+logreg = linear_model.LogisticRegression()
+logreg = logreg.fit(X_train, Y_train)
+
+Y_preds = logreg.predict(X_test)
+num_correct = len(Y_preds[(Y_test == Y_preds)])
+accuracy = (num_correct / len(Y_preds) )*100
+print("Logistic Regression accuracy on test data: " + str(round(accuracy, 2))+"%")
+
+print(logreg)
+fn = 'model/matching_coordinates/logreg_model_41620.sav'
+pickle.dump(logreg, open(fn, 'wb'))
+loaded_model = pickle.load(open(fn, 'rb'))
+loaded_model.predict([[0, 0, 0]])
+
+# test_logreg_model(all_data)
+# test_decisiontree_model(all_data)

@@ -60,11 +60,6 @@ def get_labeled_data(rgb_array, metadata_filepath, conus_data_filepath, pixel_ra
     end_y = int(start_y + ((ul_y - lr_y)//250))
 
     forest_cover = band1[start_y:end_y, start_x:end_x].copy()
-    
-    print("SHOWING")
-    plt.imshow(forest_cover, cmap="gray")
-    plt.show()
-    print("DONE SHOWING")
 
     max_x = len(forest_cover[0])
     max_y = len(forest_cover)

@@ -1,6 +1,9 @@
 var express = require('express');
 //var client = require('./client')
 var app = express();
+var morgan = require('morgan')
+
+app.use(morgan("dev"));
 
 app.engine('html', require('ejs').__express);
 app.set('view engine', 'html');

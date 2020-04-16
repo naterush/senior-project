@@ -53,6 +53,8 @@ def get_labeled_data(satellite_jpg_filepath, metadata_xml_filepath, conus_data_f
     end_y = int(start_y + ((ul_y - lr_y)//250))
 
     forest_cover = band1[start_y:end_y, start_x:end_x].copy()
+    prediction_map = forest_cover.copy()
+    prediction_map[:, :] = 0
 
     max_x = len(forest_cover[0])
     max_y = len(forest_cover)

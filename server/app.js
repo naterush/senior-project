@@ -1,6 +1,9 @@
 var express = require('express');
 //var client = require('./client')
 var app = express();
+var morgan = require('morgan')
+
+app.use(morgan("dev"));
 
 app.engine('html', require('ejs').__express);
 app.set('view engine', 'html');
@@ -71,13 +74,7 @@ var dummyMap =
 };
 
 
-
-
 app.get('/', function (req, res) {
-  res.render('map.html');
-});
-
-app.get('/sapling', function (req, res) {
   res.render('sapling.ejs.html');
 });
 

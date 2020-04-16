@@ -82,23 +82,23 @@ class Scene():
         return None
 
     def get_rgb_array(self):
-        band_2_path = self.tif_path_from_band(2)
-        band_3_path = self.tif_path_from_band(3)
-        band_4_path = self.tif_path_from_band(4)
+        band_r_path = self.tif_path_from_band(4)
+        band_g_path = self.tif_path_from_band(3)
+        band_b_path = self.tif_path_from_band(2)
 
-        band_2_im = Image.open(band_2_path)
-        band_2_arr = np.array(band_2_im)
+        band_r_im = Image.open(band_r_path)
+        band_r_arr = np.array(band_r_im)
 
-        band_3_im = Image.open(band_3_path)
-        band_3_arr = np.array(band_3_im)
+        band_g_im = Image.open(band_g_path)
+        band_g_arr = np.array(band_g_im)
 
-        band_4_im = Image.open(band_4_path)
-        band_4_arr = np.array(band_4_im)
+        band_b_im = Image.open(band_b_path)
+        band_b_arr = np.array(band_b_im)
 
-        rgb_array = np.zeros((band_2_arr.shape[0], band_2_arr.shape[1], 3), 'uint8')
-        rgb_array[..., 0] = band_4_arr
-        rgb_array[..., 1] = band_3_arr
-        rgb_array[..., 2] = band_2_arr
+        rgb_array = np.zeros((band_r_arr.shape[0], band_r_arr.shape[1], 3), 'uint8')
+        rgb_array[..., 0] = band_r_arr
+        rgb_array[..., 1] = band_g_arr
+        rgb_array[..., 2] = band_b_arr
 
         return rgb_array
 
@@ -148,32 +148,26 @@ class LandsatAPI(object):
         )
         print("Number found scenes" + str(len(scenes)))
 
+        # make the output directory if it doesn't exist
+        if not output_folder.exists():
+            output_folder.mkdir()
+
         scene_objs = []
 
         for scene_data in scenes[0:min(num_scenes, len(scenes))]:
             entity_id = scene_data['entityId']
             summary_id = scene_data["summary"].split(",")[0].split(":")[1][1:]
             
-            # make the output directory if it doesn't exist
-            if not output_folder.exists():
-                output_folder.mkdir()
-
             # make an output folder for this specific scene
             if not (output_folder / summary_id).exists():
                 (output_folder / summary_id).mkdir()
-
-            self.ee_api.download(scene_id=entity_id, output_dir=output_folder / summary_id)
-            scene_obj = Scene(output_folder / summary_id, scene_data)
-            scene_objs.append(scene_obj)
+        
+                self.ee_api.download(scene_id=entity_id, output_dir=output_folder / summary_id)
+                scene_obj = Scene(output_folder / summary_id, scene_data)
+                scene_obj.extract()
+                scene_objs.append(scene_obj)
+            else:
+                scene_obj = Scene(output_folder / summary_id)
+                scene_objs.append(scene_obj)
 
         return scene_objs
-
-"""
-api = LandsatAPI()
-d = api.download(38.8375, -120.8958, num_scenes=1, dataset="LANDSAT_ETM_C1")
-api.logout()
-for scene in d:
-    scene.extract()
-    labeled = scene.label()
-    print(labeled)
-"""

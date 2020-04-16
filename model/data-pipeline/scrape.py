@@ -11,8 +11,10 @@ import numpy as np
 from affine import Affine
 from pyproj import Proj, transform
 from PIL import Image
+import numpy as np
 from pathlib import Path
 import json
+from create_labeled_data import get_labeled_data
 
 lat = 39.952583
 long = -75.165222
@@ -71,6 +73,46 @@ class Scene():
                     return Path(path)
 
         return None
+
+    def metadata_path_str(self):
+        for path in self.folder_path.iterdir():
+            if path.suffix == ".txt":  
+                if path.name.endswith("ANG.txt"):
+                    return str(path)
+        return None
+
+    def get_rgb_array(self):
+        band_2_path = self.tif_path_from_band(2)
+        band_3_path = self.tif_path_from_band(3)
+        band_4_path = self.tif_path_from_band(4)
+
+        band_2_im = Image.open(band_2_path)
+        band_2_arr = np.array(band_2_im)
+
+        band_3_im = Image.open(band_3_path)
+        band_3_arr = np.array(band_3_im)
+
+        band_4_im = Image.open(band_4_path)
+        band_4_arr = np.array(band_4_im)
+
+        rgb_array = np.zeros((band_2_arr.shape[0], band_2_arr.shape[1], 3), 'uint8')
+        rgb_array[..., 0] = band_4_arr
+        rgb_array[..., 1] = band_3_arr
+        rgb_array[..., 2] = band_2_arr
+
+        return rgb_array
+
+    def write_img(self, img_path="myimg.jpeg"):
+        img = Image.fromarray(self.get_rgb_array())
+        img.save(img_path)
+
+    def label(self):
+        rgb_array = self.get_rgb_array()
+        metadata_filepath = self.metadata_path_str()
+        conus_data_filepath = "conus_forest_nonforest.img"
+        labeled_data = get_labeled_data(rgb_array, metadata_filepath, conus_data_filepath, pixel_radius=5)
+        return labeled_data
+
     
 
 class LandsatAPI(object):
@@ -89,8 +131,8 @@ class LandsatAPI(object):
             long,
             output_folder="downloaded_sat_data",
             dataset='LANDSAT_8_C1',
-            start_date='2010-01-01',
-            end_date='2019-01-01',
+            start_date='2016-01-01',
+            end_date='2018-01-01',
             num_scenes=1 # the number of scenes to grab, starting from the first
         ):
         # convert the output_folder to a path, for easier handling
@@ -102,7 +144,7 @@ class LandsatAPI(object):
             longitude=long,
             start_date=start_date,
             end_date=end_date,
-            max_cloud_cover=1000
+            max_cloud_cover=10
         )
         print("Number found scenes" + str(len(scenes)))
 
@@ -126,10 +168,12 @@ class LandsatAPI(object):
 
         return scene_objs
 
-
-
+"""
 api = LandsatAPI()
-d = api.download(38.8375, 120.8958, num_scenes=1, dataset="LANDSAT_TM_C1")
+d = api.download(38.8375, -120.8958, num_scenes=1, dataset="LANDSAT_ETM_C1")
 api.logout()
 for scene in d:
     scene.extract()
+    labeled = scene.label()
+    print(labeled)
+"""

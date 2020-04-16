@@ -7,3 +7,5 @@ Pillow
 affine
 xmltodict
 pyproj
+earthpy
+pickle

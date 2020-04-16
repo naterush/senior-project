@@ -1,36 +1,26 @@
 import PIL
 import numpy as np
 import matplotlib.pyplot as plt
-plt.imshow(im2, cmap = "gray")
+import earthpy
+import earthpy.spatial as es
+import earthpy.plot as ep
 
 
-b2 = 'model/data-pipeline/downloaded_sat_data/LE07_L1TP_016036_19990719_20161003_01_T1/LE07_L1TP_016036_19990719_20161003_01_T1_B2.TIF'
-b3 = 'model/data-pipeline/downloaded_sat_data/LE07_L1TP_016036_19990719_20161003_01_T1/LE07_L1TP_016036_19990719_20161003_01_T1_B3.TIF'
-b4 = 'model/data-pipeline/downloaded_sat_data/LE07_L1TP_016036_19990719_20161003_01_T1/LE07_L1TP_016036_19990719_20161003_01_T1_B4.TIF'
-# satellite_jpg_filepath = satellite_filepath.replace("TIF", "jpg")
-im2 = PIL.Image.open(b2)
-im3 = PIL.Image.open(b3)
-im4 = PIL.Image.open(b4)
-b_arr = np.array(im2)
-g_arr = np.array(im3)
-r_arr = np.array(im4)
-shape = b_arr.shape
-print(shape)
-rgb = np.zeros((shape[0], shape[1], 3))
-rgb[:, :, 0] = r_arr
-rgb[:, :, 1] = g_arr
-rgb[:, :, 2] = b_arr
-print(rgb[])
+all_landsat_post_bands = []
+for i in range(1, 4):
+    s = 'model/data-pipeline/downloaded_sat_data/ethan_test_LC08/LC08_L1TP_014032_20200316_20200326_01_T1_B'
+    s = s + str(i)+'.TIF'
+    all_landsat_post_bands.append(s)
+all_landsat_post_bands
 
-print(type(im2))
+(stack, meta) = es.stack(all_landsat_post_bands, 'model/data-pipeline/downloaded_sat_data/ethan_test_LC08/a.tif')
+print(type(meta))
 
-plt.imshow(rgb)
+# all_landsat_post_bands.sort()
+# Create an output array of all the landsat data stacked
+landsat_post_fire_path = os.path.join("data", "cold-springs-fire",
+                                      "outputs", "landsat_post_fire.tif")
 
-rgbArray = np.zeros((512,512,3), 'uint8')
-
-
-rgbArray[..., 0] = r*256
-rgbArray[..., 1] = g*256
-rgbArray[..., 2] = b*256
-img = Image.fromarray(rgbArray)
-img.save('myimg.jpeg')
+# This will create a new stacked raster with all bands
+land_stack, land_meta = es.stack(all_landsat_post_bands,
+                                 landsat_post_fire_path)

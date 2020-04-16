@@ -87,7 +87,8 @@ def get_labeled_data(satellite_jpg_filepath, metadata_xml_filepath, conus_data_f
                 results[row_num, 0] = avgR
                 results[row_num, 1] = avgG
                 results[row_num, 2] = avgB
-                results[row_num, 3] = 1 if (forest_label == 1) else 0
+                # results[row_num, 3] = 1 if (forest_label == 1) else 0
+                results[row_num, 3] = forest_label
                 row_num = row_num + 1
 
     all_results = results[:row_num].copy()
@@ -166,10 +167,10 @@ accuracy = (num_correct / len(Y_preds) )*100
 print("Logistic Regression accuracy on test data: " + str(round(accuracy, 2))+"%")
 
 print(logreg)
-fn = 'model/matching_coordinates/logreg_model_41620.sav'
+fn = 'model/matching_coordinates/logreg_model_3class.sav'
 pickle.dump(logreg, open(fn, 'wb'))
-loaded_model = pickle.load(open(fn, 'rb'))
-loaded_model.predict([[0, 0, 0]])
+# loaded_model = pickle.load(open(fn, 'rb'))
+# loaded_model.predict([[0, 0, 0]])
 
 # test_logreg_model(all_data)
 # test_decisiontree_model(all_data)

@@ -17,6 +17,7 @@ import pprint
 import warnings
 import pickle
 import time
+warnings.filterwarnings("ignore")
 
 # Input: Takes in a JPG image with bounds given in an XML file, conus/non-conus map
 # Produces a np array of training data for only the colored portions of the image
@@ -106,6 +107,7 @@ def get_prediction_map(model_filepath, satellite_jpg_filepath, metadata_filepath
 
 
 model_fp = 'model/matching_coordinates/logreg_model_3class.sav'
+model_fp = 'model/matching_coordinates/dtree_3class.sav'
 conus_fp = 'model/data-pipeline/conus_forest_nonforest.img'
 jpg_before = 'model/matching_coordinates/case_study_data/walker_fire_before1.jpg'
 metadata_before = 'model/matching_coordinates/case_study_data/walker_fire_before1.xml'
@@ -122,8 +124,8 @@ print(str(round((time.time() - s), 2)) + ' seconds for AFTER photo')
 
 
 
-# plt.imshow(pred_map_before, cmap='gray')
-# plt.imshow(pred_map_after, cmap='gray')
+plt.imshow(pred_map_before, cmap='gray')
+plt.imshow(pred_map_after, cmap='gray')
 # # print(pred_map_after[500, 100:])
 # if True:
 #     crop = pred_map_before[300:500, 100:400]

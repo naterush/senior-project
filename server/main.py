@@ -305,6 +305,30 @@ def get_json_changes(change_map, metadata_fp):
                 json_arr.append(json_change)
     return json_arr
 
+def get_bounds(metadata_filepath):
+    # Get the bounding coordinates from the metadata file
+    if metadata_filepath.endswith(".xml"):
+        with open(metadata_filepath) as fd:
+            metadata = xmltodict.parse(fd.read())
+
+        # Get the Albers Equal Area bounds of the satellite image
+        projection_bounds = metadata['ard_metadata']['tile_metadata']['global_metadata']['projection_information']
+        ul_x = float(projection_bounds['corner_point'][0]['@x'])
+        ul_y = float(projection_bounds['corner_point'][0]['@y'])
+        lr_x = float(projection_bounds['corner_point'][1]['@x'])
+        lr_y = float(projection_bounds['corner_point'][1]['@y'])
+    elif metadata_filepath.endswith(".txt"):
+        with open(metadata_filepath) as fd:
+            lines = [l.strip() for l in fd.readlines()]
+
+        ul_line = [l for l in lines if l.startswith("UL_CORNER")][0].split("=")[1].strip()[1:-1]
+        lr_line = [l for l in lines if l.startswith("LR_CORNER")][0].split("=")[1].strip()[1:-1]
+        ul_x = float(ul_line.split(",")[0])
+        ul_y = float(ul_line.split(",")[1])
+        lr_x = float(lr_line.split(",")[0])
+        lr_y = float(lr_line.split(",")[1])
+    return (ul_x, ul_y, lr_x, lr_y)
+    
 def main():
     if (len(sys.argv)) != 3:
         print("Usage: python3 main.py <lat> <long>")

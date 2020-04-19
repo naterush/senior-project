@@ -79,8 +79,8 @@
         		var latLng = mouse.latLng;
         		var lat = latLng.lat;
         		var long = latLng.lng;
-        		document.addForm.longitude.value = long();
-        		document.addForm.latitude.value = lat();
+        		document.getRegion.longitude.value = long();
+        		document.getRegion.latitude.value = lat();
         	});
         	//Start the refresh cycle
         	$(document).ready(function() {
@@ -144,9 +144,29 @@
 
       	var init = function() {
 
-      		loadMap();
-      		// testButtonPress();
+			// We load the map
+			loadMap();
+			
+			// We also register the handlers for the submit button
+			$('#getRegion').submit(function(event){
+				event.preventDefault();
+				const lat = document.getElementById("latitude").value;
+				const long = document.getElementById("longitude").value;
 
+				const data = {"latitude": lat, "longitude": long};
+				
+
+				$.ajax({
+					url: "/getRegion",
+					data: data,
+					success: function(data) {
+						console.log("WE GOT A RESPONSE", data)
+      				}
+				});
+
+
+				console.log(lat, long)
+			});
       	}
       	
       	
@@ -208,12 +228,17 @@
 	</div>
 	<div id="map" style="width:800px;height:500px;"></div>
   <p> 
+
+	
   <div class="form-title">
   Current Latitude and Longitude:
   </div>
-  <form class="add-form" name="addForm" action="" method="post" onsubmit="return 0">
-	    <input class="f-item" type="text" name="longitude" placeholder=" Longitude" value>
-	    <input class="f-item" type="text" name="latitude" placeholder = " Latitude">
+  <form class="add-form" name="getRegion" id="getRegion">
+		<input class="f-item" type="text" name="latitude" id="latitude" placeholder = " Latitude">
+	    <input class="f-item" type="text" name="longitude" id="longitude" placeholder=" Longitude" value>
+		<div>
+			<button>Get</button>
+		</div>
   </form>
   <p>
   <font color="blue"> <p><a href="/logout"> Logout</a>

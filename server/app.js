@@ -11,10 +11,17 @@ app.set('view engine', 'html');
 app.use(express.static(__dirname + '/public'));
 app.set('view engine', 'ejs');
 
+app.use(express.urlencoded());
+
 async function runModel(lat, long) {
   const { stdout, stderr } = await exec(`python3 main.py ${lat} ${long}`);
-  console.log('stdout:', stdout);
-  console.log('stderr:', stderr);
+
+  if (stderr.length !== 0) {
+    console.log(`Call to model with ${lat}, ${long} errored with :\n ${stderr}`);
+    return {};
+  }
+
+  return JSON.parse(stdout);
 }
 
 function getJSONData(latitude, longitude, radius) {
@@ -35,57 +42,28 @@ function getJSONData(latitude, longitude, radius) {
 }
 
 
-// TODO: this should be a JSON object input not a regular object
-var dummyMap =
-{
-	"coordinates": [
-		{
-			"latitude": "40.416775",
-			"longitude": "-3.70379",
-			"color": "GREEN",
-			"weight": "6"
-		},
-		{
-			"latitude": "41.385064",
-			"longitude": "2.173403",
-			"color": "GREEN",
-			"weight": "2"
-		},
-		{
-			"latitude": "52.130661",
-			"longitude": "-3.783712",
-			"color": "GREEN",
-			"weight": "2"
-		},
-		{
-			"latitude": "55.378051",
-			"longitude": "-3.435973",
-			"color": "GREEN",
-			"weight": "8"
-		},
-		{
-			"latitude": "-40.900557",
-			"longitude": "-174.885971",
-			"color": "GREEN",
-			"weight": "6"
-		},
-		{
-			"latitude": "40.714353",
-			"longitude": "-74.005973",
-			"color": "RED",
-			"weight": "6"
-		}
-	]
-};
-
-
 app.get('/', async function (req, res) {
   res.render('sapling.ejs.html');
-  await runModel(1, 2);
 });
 
 
-app.get('/getRegion', function (req, res) {
+app.get('/getRegion', async function (req, res) {
+  // We set a timeout of 5 minutes...
+  // because the model might take a while
+  req.setTimeout(5 * 60 * 1000);
+
+  const {latitude, longitude} = req.query;
+
+  console.log(`Got region ${latitude}, ${longitude}`);
+
+  const modelJSONResult = await runModel(latitude, longitude);
+
+  console.log(`Got region ${latitude}, ${longitude} : ${modelJSONResult}`);
+
+  res.json(modelJSONResult);
+
+  return
+
   //client.getRegionFunction();
   console.log("Reached");
   //Take point, radius. Return "map overlay data"

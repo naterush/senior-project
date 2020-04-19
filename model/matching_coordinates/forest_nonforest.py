@@ -10,7 +10,7 @@ from pyproj import Proj, transform
 
 
 # read in the image
-forest_nonforest_img = 'conus_forest_nonforest.img'
+forest_nonforest_img = 'model/matching_coordinates/conus_forest_nonforest.img'
 ds = rasterio.open(forest_nonforest_img)
 
 print("Dataset Name: " + ds.name)
@@ -31,8 +31,12 @@ print("Dataset Bounds: ", ds.bounds)
 # band1 contains the biomass data we are interested in
 band1 = ds.read(1)
 plt.imshow(band1, cmap = "gray")
+band1 = ds.read(1)
+band1[band1[:] == 0] = 3
+print(band1[10000])
+plt.imshow(band1, cmap = "gray")
 
-exit(1)
+
 
 a = 10384
 b = 15480

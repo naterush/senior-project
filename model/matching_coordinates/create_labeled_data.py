@@ -169,10 +169,10 @@ accuracy = (num_correct / len(Y_preds) )*100
 print("Logistic Regression accuracy on test data: " + str(round(accuracy, 2))+"%")
 
 print(logreg)
-fn = 'model/matching_coordinates/logreg_model_3class.sav'
-pickle.dump(logreg, open(fn, 'wb'))
-# loaded_model = pickle.load(open(fn, 'rb'))
-# loaded_model.predict([[0, 0, 0]])
-
+fn = 'model/matching_coordinates/logreg_model_2class.sav'
+# pickle.load(open(fn, 'wb'))
+loaded_model = pickle.load(open(fn, 'rb'))
+p = loaded_model.predict([[5, 0, 11]])
+print(p[0])
 # test_logreg_model(all_data)
 # test_decisiontree_model(all_data)

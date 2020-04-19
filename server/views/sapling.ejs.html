@@ -160,7 +160,10 @@
 					url: "/getRegion",
 					data: data,
 					success: function(data) {
-						console.log("WE GOT A RESPONSE", data)
+						console.log(`Got data for ${lat}, ${long}`);
+						console.log(data);
+
+						// TODO: mason, add your code to add the heatmap overlay here.
       				}
 				});
 

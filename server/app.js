@@ -1,7 +1,8 @@
 var express = require('express');
-//var client = require('./client')
-var app = express();
+const util = require('util');
 var morgan = require('morgan')
+const exec = util.promisify(require('child_process').exec);
+var app = express();
 
 app.use(morgan("dev"));
 
@@ -10,7 +11,11 @@ app.set('view engine', 'html');
 app.use(express.static(__dirname + '/public'));
 app.set('view engine', 'ejs');
 
-
+async function runModel(lat, long) {
+  const { stdout, stderr } = await exec(`python3 main.py ${lat} ${long}`);
+  console.log('stdout:', stdout);
+  console.log('stderr:', stderr);
+}
 
 function getJSONData(latitude, longitude, radius) {
   // Within a radius of this point, return the heat map results
@@ -74,8 +79,9 @@ var dummyMap =
 };
 
 
-app.get('/', function (req, res) {
+app.get('/', async function (req, res) {
   res.render('sapling.ejs.html');
+  await runModel(1, 2);
 });
 
 
@@ -117,7 +123,9 @@ app.get('/getRegion', function (req, res) {
   //res.json(getJSONData(latitude, longitude, radius));
 });
 
-app.listen(3000);
+app.listen(3000, () => {
+  console.log("Server is running on port 3000");
+});
 
 
 //module.exports = app;

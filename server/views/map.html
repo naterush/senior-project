@@ -91,9 +91,7 @@ google.maps.event.addDomListener(window, 'load', initializeMap);
       <button onclick="selectNewRegion()">Select New Region</button>
       <button onclick="buildHeatMap()">Build Heat Map</button>
       <button onclick="changeRadius()">Change radius</button>
-      <input class="f-item" type="text" name="radius" id="radius" placeholder = "Radius">
       <button onclick="changeOpacity()">Change opacity</button>
-      <input class="f-item" type="text" name="opacity" id="opacity" placeholder = "Opacity">
     </div>
     <div id="map"></div>
     <script>
@@ -103,10 +101,22 @@ google.maps.event.addDomListener(window, 'load', initializeMap);
       // <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&libraries=visualization">
 
       // Create variables for the Google Map and Heat Maps
-      var map;              // Google Map
-      var heatmapGrowth;    // Heat Map for tree growth
-      var heatmapDeath;     // Heat Map for tree death
-      var crosshair;        // Variable to toggle the mouse cursor
+      var map; // Google Map
+      var heatmapGrowth; // Heat Map for tree growth
+      var heatmapDeath; // Heat Map for tree death
+      var crosshair; // Variable to toggle the mouse cursor
+      var first; // First point when selecting a region
+      var selecting;      // Set to true when user is actively selecting a region
+      var secondInitial;    // Second point when selecting a region while dragging
+      var secondFinal;      // Second point when selecting a region once mouse is released
+      var boundingBox;      // The boundingBox we will draw while a user is selecting a region
+      var bounds;           // Bounds of bounding box
+      var sw;               // South east corner of bounding box
+      var ne;               // North west corner of bounding box
+      var rectN;            // North edge of bounding box
+      var rectS;            // South edge of bounding box
+      var rectE;            // East edge of bounding box
+      var rectW;            // West edge of bounding box
       var rect;             // Bounding box
 
       var g = new Array(
@@ -148,6 +158,8 @@ google.maps.event.addDomListener(window, 'load', initializeMap);
           mapTypeId: 'satellite'
         });
 
+
+        
         // Initialize crosshair to false, since the mouse does not begin as a crosshair
         crosshair = false;
       }
@@ -170,7 +182,6 @@ google.maps.event.addDomListener(window, 'load', initializeMap);
 
       function toggleHeatmap() {
         heatmapGrowth.setMap(heatmapGrowth.getMap() ? null : map);
-        heatmapDeath.setMap(heatmapDeath.getMap() ? null : map);
       }
 
       function selectNewRegion() {
@@ -200,9 +211,9 @@ google.maps.event.addDomListener(window, 'load', initializeMap);
           crosshair = !crosshair;
 
           // Find bounds of current screen
-          var bounds = map.getBounds();
-          var sw = bounds.getSouthWest();
-          var ne = bounds.getNorthEast();
+          bounds = map.getBounds();
+          sw = bounds.getSouthWest();
+          ne = bounds.getNorthEast();
 
           // Calculate the vertical and horizonal lat/long distances of screen
           var vertical = ne.lat() - sw.lat();
@@ -218,8 +229,8 @@ google.maps.event.addDomListener(window, 'load', initializeMap);
           rectW = parseFloat(center.lng()) - parseFloat(horizontal)/8;
 
           // Create SW and NE points of bounding box
-          rectSW = new google.maps.LatLng(rectS, rectW);
-          rectNE = new google.maps.LatLng(rectN, rectE);
+          var rectSW = new google.maps.LatLng(rectS, rectW);
+          var rectNE = new google.maps.LatLng(rectN, rectE);
 
           // Build rectangle to be displayed upon the Map
           rect = new google.maps.LatLngBounds(rectSW, rectNE);
@@ -239,9 +250,18 @@ google.maps.event.addDomListener(window, 'load', initializeMap);
 
       function buildHeatMap() {
 
+        // Get bounds of current bounding box
+        var 
+
+        // Calculate the coordinates of default bounding box
+          rectN = parseFloat(center.lat()) + parseFloat(vertical)/8;
+          rectS = parseFloat(center.lat()) - parseFloat(vertical)/8;
+          rectE = parseFloat(center.lng()) + parseFloat(horizontal)/8;
+          rectW = parseFloat(center.lng()) - parseFloat(horizontal)/8;
+
         // Initialize the Heat Map displaying tree growth
         heatmapGrowth = new google.maps.visualization.HeatmapLayer({
-          data: getPoints(),
+          data: getPoints(rectN, rectE, rectS, rectW),
           gradient: g,
           map: map
         });
@@ -257,21 +277,17 @@ google.maps.event.addDomListener(window, 'load', initializeMap);
       }
 
       function changeRadius() {
-        const radius = document.getElementById("radius").value;
-        heatmapGrowth.set('radius', heatmapGrowth.get('radius') ? null : radius);
-        heatmapDeath.set('radius', heatmapDeath.get('radius') ? null : radius);
+        heatmapGrowth.set('radius', heatmapGrowth.get('radius') ? null : 20);
       }
 
       function changeOpacity() {
         heatmapGrowth.set('opacity', heatmapGrowth.get('opacity') ? null : 0.2);
-        heatmapDeath.set('opacity', heatmapDeath.get('opacity') ? null : 0.2);
       }
 
       // Heatmap data: 500 Points
       function getPoints(never, eat, soggy, waffles) {
-        // Get bounds of current bounding box
-        var rectBounds = rect.bounds;
-        return [
+        if (never > 37 && eat > -121 && soggy < 38 && waffles < -122) {
+          return [
           new google.maps.LatLng(37.782551, -122.445368),
           new google.maps.LatLng(37.782745, -122.444586),
           new google.maps.LatLng(37.782842, -122.443688),
@@ -773,6 +789,7 @@ google.maps.event.addDomListener(window, 'load', initializeMap);
           new google.maps.LatLng(37.752986, -122.403112),
           new google.maps.LatLng(37.751266, -122.403355)
         ];
+        }
       }
       /*// Map Listener for mouse down to begin selecting region
         map.addListener('mousedown', function(mouse) {

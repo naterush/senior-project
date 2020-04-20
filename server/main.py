@@ -498,7 +498,7 @@ def get_json_changes(change_map, metadata_fp, grid_size=60):
 
     inProj = Proj(init='epsg:5070')
     outProj = Proj(init='epsg:4269')
-    json_arr = [None] * (height // grid_size) * (width // grid_size)
+    json_arr = []
 
     # Get the lat/long of each region where there has been a change
     for y in range(0, height, grid_size):
@@ -575,6 +575,15 @@ def main():
         start_date="2016-4-1",
         end_date="2017-1-1"
     )[0]
+
+    # WRS Row Path is the location of the image, which we use as the key to cache computations
+    WRS_ROW_PATH = str(old_scene.folder_path).split("/")[1].split("_")[2]
+
+    # we check the cache to see if we've already done the computation
+    if os.path.exists(f"output/{WRS_ROW_PATH}.txt"):
+        print(f"output/{WRS_ROW_PATH}.txt")
+        exit(0)
+
     old_scene_metadata = old_scene.metadata_path_str()
     before_jpg_filepath = str(old_scene.folder_path) + '/before_img.jpg'
     old_scene.write_img(before_jpg_filepath)
@@ -641,7 +650,14 @@ def main():
         }
     ])
 
-    print(data_real)
+    if not os.path.exists("output"):
+        os.mkdir("output")
+
+    with open(f"output/{WRS_ROW_PATH}.txt", "w+") as f:
+        f.write(data_real)
+
+    print(f"output/{WRS_ROW_PATH}.txt")
+    #NOTE: Do not print below this line. The server relies on this being the last print
 
 
 if __name__ == "__main__":

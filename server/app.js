@@ -1,6 +1,7 @@
 var express = require('express');
 const util = require('util');
-var morgan = require('morgan')
+var morgan = require('morgan');
+const fs = require(`fs`).promises;
 const exec = util.promisify(require('child_process').exec);
 var app = express();
 
@@ -15,13 +16,20 @@ app.use(express.urlencoded());
 
 async function runModel(lat, long) {
   const { stdout, stderr } = await exec(`python3 main.py ${lat} ${long}`);
+  console.log(stdout, stderr)
 
   if (stderr.length !== 0) {
     console.log(`Call to model with ${lat}, ${long} errored with :\n ${stderr}`);
     return {};
   }
 
-  return JSON.parse(stdout);
+  const outputArr = stdout.split("\n");
+  const newfile = outputArr[outputArr.length - 2]
+
+  // Read in the file
+  const jsonData = await fs.readFile(newfile)
+
+  return JSON.parse(jsonData);
 }
 
 function getJSONData(latitude, longitude, radius) {

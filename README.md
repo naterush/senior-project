@@ -13,7 +13,11 @@ To run the node server:
 
 ```
 cd server;
-
+python3 -m venv venv;
+source venv/bin/activate;
+pip install -r requirments.txt;
+deactivate;
+npm start;
 ```
 
 TODO

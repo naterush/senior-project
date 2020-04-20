@@ -5,3 +5,6 @@ model/data-pipeline/downloaded_sat_data/
 !model/data-pipeline/downloaded_sat_data/LT05_L1TP_120033_20100123_20161017_01_T1/LT05_L1TP_120033_20100123_20161017_01_T1_B1.TIF
 !model/data-pipeline/downloaded_sat_data/LT05_L1TP_120033_20100123_20161017_01_T1/LT05_L1TP_120033_20100123_20161017_01_T1_ANG.txt
 *node_modules
+*downloaded_sat_data
+*venv
+server/output

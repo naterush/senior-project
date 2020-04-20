@@ -91,7 +91,9 @@ google.maps.event.addDomListener(window, 'load', initializeMap);
       <button onclick="selectNewRegion()">Select New Region</button>
       <button onclick="buildHeatMap()">Build Heat Map</button>
       <button onclick="changeRadius()">Change radius</button>
+      <input class="f-item" type="text" name="radius" id="radius" placeholder = "Radius">
       <button onclick="changeOpacity()">Change opacity</button>
+      <input class="f-item" type="text" name="opacity" id="opacity" placeholder = "Opacity">
     </div>
     <div id="map"></div>
     <script>
@@ -255,8 +257,9 @@ google.maps.event.addDomListener(window, 'load', initializeMap);
       }
 
       function changeRadius() {
-        heatmapGrowth.set('radius', heatmapGrowth.get('radius') ? null : 20);
-        heatmapDeath.set('radius', heatmapDeath.get('radius') ? null : 20);
+        const radius = document.getElementById("radius").value;
+        heatmapGrowth.set('radius', heatmapGrowth.get('radius') ? null : radius);
+        heatmapDeath.set('radius', heatmapDeath.get('radius') ? null : radius);
       }
 
       function changeOpacity() {

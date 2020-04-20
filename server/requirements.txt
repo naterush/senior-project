@@ -1,0 +1,17 @@
+rasterio==1.1.1
+matplotlib
+pandas
+landsatxplore
+sklearn
+Pillow
+affine
+xmltodict
+pyproj
+earthpy
+numpy 
+scipy 
+matplotlib 
+ipython 
+pandas 
+sympy 
+nose

@@ -18,8 +18,8 @@ import pickle
 import warnings
 warnings.filterwarnings("ignore")
 
-model_filepath = 'model/matching_coordinates/dtree_3class.sav'
-conus_filepath = 'server/conus_forest_nonforest.img'
+model_filepath = 'dtree_3class.sav'
+conus_filepath = 'conus_forest_nonforest.img'
 
 # from create_labeled_data import get_labeled_data
 class LandsatAPI(object):
@@ -86,28 +86,31 @@ class Scene():
 
         self.folder_path = folder_path
 
-        if scene_data is None:
-            # if this object is created directly from the folder path,
-            # it must already be extracted, so we read scene data
-            with open(self.folder_path / "scene_data.txt", "r") as f:
-                self.scene_data = json.loads(f.read())
-        else:
-            self.scene_data = scene_data
-
-            # then we write the scene data
-            with open(self.folder_path / "scene_data.txt", "w+") as f:
-                f.write(json.dumps(self.scene_data))
-
     def extract(self):
         if len(list(self.folder_path.iterdir())) > 2:
             # we don't need to do anything if this was already extracted
             print("Already extracted! Returning.")
             return
 
+        # We need to extract the text file that ends in ANG.txt
+        # as well as the bands 2, 3, 4, 
+        def to_download(tarinfo):
+            name = tarinfo.name
+            if name.endswith("ANG.txt"):
+                return True
+            if name.endswith("B2.TIF"):
+                    return True
+            if name.endswith("B3.TIF"):
+                    return True
+            if name.endswith("B4.TIF"):
+                    return True
+            return False
+
         # extract the tar file
         tar_file = list(x for x in self.folder_path.iterdir() if x.suffix == ".gz")[0]
         with tarfile.open(tar_file, "r:gz") as mytar:
-            mytar.extractall(path=self.folder_path)
+            print([m for m in mytar.getmembers() if to_download(m)])
+            mytar.extractall(path=self.folder_path, members=[m for m in mytar.getmembers() if to_download(m)])
 
         print(f"Extracted in {self.folder_path}")
 
@@ -297,11 +300,11 @@ def get_json_changes(change_map, metadata_fp):
                 curr_y = ul_y - ((y/height) * (ul_y-lr_y))
                 (long, lat) = transform(inProj,outProj,curr_x,curr_y)
                 json_change = {
-        			"latitude": str(lat),
-        			"longitude": str(long),
-        			"color": "RED",
-        			"weight": "5"
-        		}
+                    "latitude": str(lat),
+                    "longitude": str(long),
+                    "color": "RED",
+                    "weight": "5"
+                }
                 json_arr.append(json_change)
     return json_arr
 
@@ -337,6 +340,8 @@ def main():
     # Get the user given coordinates
     lat = float(sys.argv[1])
     lng = float(sys.argv[2])
+
+    print(f"Getting with {lat}, {lng}")
 
     # Download 2 images at these coordinates
     api = LandsatAPI()
@@ -374,46 +379,47 @@ def main():
     data_real = json.dumps(json_changes)
 
     data_fake = json.dumps([
-		{
-			"latitude": "40.416775",
-			"longitude": "-3.70379",
-			"color": "GREEN",
-			"weight": "6"
-		},
-		{
-			"latitude": "41.385064",
-			"longitude": "2.173403",
-			"color": "GREEN",
-			"weight": "2"
-		},
-		{
-			"latitude": "52.130661",
-			"longitude": "-3.783712",
-			"color": "GREEN",
-			"weight": "2"
-		},
-		{
-			"latitude": "55.378051",
-			"longitude": "-3.435973",
-			"color": "GREEN",
-			"weight": "8"
-		},
-		{
-			"latitude": "-40.900557",
-			"longitude": "-174.885971",
-			"color": "GREEN",
-			"weight": "6"
-		},
-		{
-			"latitude": "40.714353",
-			"longitude": "-74.005973",
-			"color": "RED",
-			"weight": "6"
-		}
-	])
+        {
+            "latitude": "40.416775",
+            "longitude": "-3.70379",
+            "color": "GREEN",
+            "weight": "6"
+        },
+        {
+            "latitude": "41.385064",
+            "longitude": "2.173403",
+            "color": "GREEN",
+            "weight": "2"
+        },
+        {
+            "latitude": "52.130661",
+            "longitude": "-3.783712",
+            "color": "GREEN",
+            "weight": "2"
+        },
+        {
+            "latitude": "55.378051",
+            "longitude": "-3.435973",
+            "color": "GREEN",
+            "weight": "8"
+        },
+        {
+            "latitude": "-40.900557",
+            "longitude": "-174.885971",
+            "color": "GREEN",
+            "weight": "6"
+        },
+        {
+            "latitude": "40.714353",
+            "longitude": "-74.005973",
+            "color": "RED",
+            "weight": "6"
+        }
+    ])
 
     print(data_real)
 
 
 if __name__ == "__main__":
     main()
+

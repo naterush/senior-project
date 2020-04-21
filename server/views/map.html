@@ -45,6 +45,7 @@ google.maps.event.addDomListener(window, 'load', initializeMap);
 </html>-->
 <!DOCTYPE html>
 <html>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
   <head>
     <meta charset="utf-8">
     <title>HeatMap</title>
@@ -248,32 +249,52 @@ google.maps.event.addDomListener(window, 'load', initializeMap);
         }
       }
 
-      function buildHeatMap() {
-
-        // Get bounds of current bounding box
-        var 
-
-        // Calculate the coordinates of default bounding box
-          rectN = parseFloat(center.lat()) + parseFloat(vertical)/8;
-          rectS = parseFloat(center.lat()) - parseFloat(vertical)/8;
-          rectE = parseFloat(center.lng()) + parseFloat(horizontal)/8;
-          rectW = parseFloat(center.lng()) - parseFloat(horizontal)/8;
-
-        // Initialize the Heat Map displaying tree growth
-        heatmapGrowth = new google.maps.visualization.HeatmapLayer({
-          data: getPoints(rectN, rectE, rectS, rectW),
-          gradient: g,
-          map: map
-        });
-
-        /*
-        // Initialize the Heat Map displaying tree death
-        heatmapDeath = new google.maps.visualization.HeatmapLayer({
-          data: getPointsDeath(),
-          gradient: r,
-          map: map
+      function getGrowthPoints(data) {
+        growth = [];
+        data.forEach(point => {
+          if (point.color === "GREEN") {
+            console.log(parseFloat(point.latitude), parseFloat(point.longitude))
+            growth.push(new google.maps.LatLng(parseFloat(point.latitude), parseFloat(point.longitude)));
+          }
         })
-        */
+        return growth;
+      }
+
+      function getDeathPoints(data) {
+        death = [];
+        data.forEach(point => {
+          if (point.color === "RED") {
+            console.log(parseFloat(point.latitude), parseFloat(point.longitude))
+            death.push(new google.maps.LatLng(parseFloat(point.latitude), parseFloat(point.longitude)));
+          }
+        })
+        return death;
+      }
+
+      function buildHeatMap() {
+        console.log("Building heat map");
+        const lat = 40.02882154070936;
+        const long = -121.14185813242528;
+        const data = {"latitude": lat, "longitude": long};
+
+        $.ajax({
+          url: "/getRegion",
+          data: data,
+          success: function(jsonData) {
+            // We then filter the data
+            const growthPoints = getGrowthPoints(jsonData);
+            const deathPoints = getDeathPoints(jsonData);
+
+            console.log(deathPoints)
+
+            heatmapGrowth = new google.maps.visualization.HeatmapLayer({
+              data: deathPoints,
+              gradient: ["red"],
+              map: map
+            });
+
+            }
+        });
       }
 
       function changeRadius() {

@@ -54,6 +54,9 @@ app.get('/', async function (req, res) {
   res.render('sapling.ejs.html');
 });
 
+app.get('/map', async function (req, res) {
+  res.render('map.html');
+});
 
 app.get('/getRegion', async function (req, res) {
   // We set a timeout of 5 minutes...

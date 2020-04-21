@@ -57,6 +57,10 @@ class LandsatAPI(object):
             max_cloud_cover=10
         )
         print("Number scenes found: " + str(len(scenes)))
+        scenes.sort(key=lambda x : x['cloudCover'])
+        for scene in scenes:
+            print(scene['cloudCover'])
+        fdasf
 
         # make the output directory if it doesn't exist
         if not output_folder.exists():
@@ -246,7 +250,7 @@ def find_changes(region1, region2, grid_size=60, thresh_pct=0):
     height = region1.shape[0]
     width = region1.shape[1]
     pixels_per_square = (height//grid_size) * (width//grid_size)
-    print(pixels_per_square)
+    # print(pixels_per_square)
     thresh = pixels_per_square * 0.50
     for y_top_left in range(0, height, height//grid_size):
         for x_top_left in range(0, width, width//grid_size):
@@ -277,7 +281,7 @@ def find_changes(region1, region2, grid_size=60, thresh_pct=0):
                 change_map_region[:, :] = 0
     return change_map
 
-def get_json_changes(change_map, metadata_fp, grid_size=60):
+def get_json_changes(change_map, metadata_fp, grid_size=10):
     # Get bounds
     (ul_x, ul_y, lr_x, lr_y) = get_bounds(metadata_fp)
     width = len(change_map[0])
@@ -292,7 +296,6 @@ def get_json_changes(change_map, metadata_fp, grid_size=60):
         for x in range(0, width, grid_size):
             change_map_square = change_map[y:y + grid_size, x:x + grid_size]
             change_sum = np.sum(change_map_square)
-            print(y, x)
 
             curr_x = ul_x + ((x/width) * (lr_x-ul_x))
             curr_y = ul_y - ((y/height) * (ul_y-lr_y))
@@ -341,17 +344,12 @@ def get_bounds(metadata_filepath):
         lr_y = float(lr_line.split(",")[1])
         # TODO: ZONE HERE
         utm_zone = int([l for l in lines if l.startswith("UTM_ZONE")][0].split("=")[1].strip())
-        print("got zone", utm_zone)
+        # print("got zone", utm_zone)
         inProj = Proj(proj="utm",zone=utm_zone,ellps="WGS84", south=False)
         outProj = Proj(init='epsg:5070')
 
-        print("(ul_x, ul_y): ", (ul_x, ul_y))
         (ul_x, ul_y) = transform(inProj,outProj,ul_x,ul_y)
-        print("after (ul_x, ul_y): ", (ul_x, ul_y))
-
-        print("(lr_x, lr_y): ", (lr_x, lr_y))
         (lr_x, lr_y) = transform(inProj,outProj,lr_x,lr_y)
-        print("after (lr_x, lr_y): ", (lr_x, lr_y))
 
     return (ul_x, ul_y, lr_x, lr_y)
 
@@ -374,7 +372,7 @@ def main():
         lng,
         num_scenes=1,
         start_date="2016-06-01",
-        end_date="2016-09-01"
+        end_date="2016-10-15"
     )[0]
 
     # WRS Row Path is the location of the image, which we use as the key to cache computations
@@ -396,7 +394,7 @@ def main():
         lng,
         num_scenes=1,
         start_date="2019-06-01",
-        end_date="2019-09-01"
+        end_date="2019-10-15"
     )[0]
     new_scene_metadata = new_scene.metadata_path_str()
     after_jpg_filepath = str(new_scene.folder_path) + '/after_img.jpg'

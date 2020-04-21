@@ -59,9 +59,9 @@ app.get('/map', async function (req, res) {
 });
 
 app.get('/getRegion', async function (req, res) {
-  // We set a timeout of 5 minutes...
+  // We set a timeout of 15 minutes...
   // because the model might take a while
-  req.setTimeout(5 * 60 * 1000);
+  req.setTimeout(15 * 60 * 1000);
 
   const {latitude, longitude} = req.query;
 

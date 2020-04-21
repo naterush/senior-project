@@ -400,7 +400,6 @@ def get_prediction_map(model_filepath, satellite_jpg_filepath, metadata_filepath
 
         ul_line = [l for l in lines if l.startswith("UL_CORNER")][0].split("=")[1].strip()[1:-1]
         lr_line = [l for l in lines if l.startswith("LR_CORNER")][0].split("=")[1].strip()[1:-1]
-        utm_zone = int([l for l in lines if l.startswith("UTM_ZONE")][0].split("=")[1].strip())
         print(utm_zone)
         ul_x = float(ul_line.split(",")[0])
         ul_y = float(ul_line.split(",")[1])
@@ -555,7 +554,9 @@ def get_bounds(metadata_filepath):
         lr_x = float(lr_line.split(",")[0])
         lr_y = float(lr_line.split(",")[1])
         # TODO: ZONE HERE
-        inProj = Proj(proj="utm",zone=18,ellps="WGS84", south=False)
+        utm_zone = int([l for l in lines if l.startswith("UTM_ZONE")][0].split("=")[1].strip())
+        print("got zone", utm_zone)
+        inProj = Proj(proj="utm",zone=utm_zone,ellps="WGS84", south=False)
         outProj = Proj(init='epsg:5070')
 
         print("(ul_x, ul_y): ", (ul_x, ul_y))

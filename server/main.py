@@ -383,28 +383,7 @@ class Scene():
 def get_prediction_map(model_filepath, satellite_jpg_filepath, metadata_filepath, conus_data_filepath, pixel_radius=4):
     loaded_model = pickle.load(open(model_filepath, 'rb'))
 
-    # Get the bounding coordinates from the metadata file
-    if metadata_filepath.endswith(".xml"):
-        with open(metadata_filepath) as fd:
-            metadata = xmltodict.parse(fd.read())
-
-        # Get the Albers Equal Area bounds of the satellite image
-        projection_bounds = metadata['ard_metadata']['tile_metadata']['global_metadata']['projection_information']
-        ul_x = float(projection_bounds['corner_point'][0]['@x'])
-        ul_y = float(projection_bounds['corner_point'][0]['@y'])
-        lr_x = float(projection_bounds['corner_point'][1]['@x'])
-        lr_y = float(projection_bounds['corner_point'][1]['@y'])
-    elif metadata_filepath.endswith(".txt"):
-        with open(metadata_filepath) as fd:
-            lines = [l.strip() for l in fd.readlines()]
-
-        ul_line = [l for l in lines if l.startswith("UL_CORNER")][0].split("=")[1].strip()[1:-1]
-        lr_line = [l for l in lines if l.startswith("LR_CORNER")][0].split("=")[1].strip()[1:-1]
-        print(utm_zone)
-        ul_x = float(ul_line.split(",")[0])
-        ul_y = float(ul_line.split(",")[1])
-        lr_x = float(lr_line.split(",")[0])
-        lr_y = float(lr_line.split(",")[1])
+    (ul_x, ul_y, lr_x, lr_y) = get_bounds(metadata_filepath)
 
     # Open the satellite image
     img = PIL.Image.open(satellite_jpg_filepath)

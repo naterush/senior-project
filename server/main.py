@@ -58,9 +58,6 @@ class LandsatAPI(object):
         )
         print("Number scenes found: " + str(len(scenes)))
         scenes.sort(key=lambda x : x['cloudCover'])
-        for scene in scenes:
-            print(scene['cloudCover'])
-        fdasf
 
         # make the output directory if it doesn't exist
         if not output_folder.exists():

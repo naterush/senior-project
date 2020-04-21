@@ -552,6 +552,18 @@ def get_bounds(metadata_filepath):
         ul_y = float(ul_line.split(",")[1])
         lr_x = float(lr_line.split(",")[0])
         lr_y = float(lr_line.split(",")[1])
+        # TODO: ZONE HERE
+        inProj = Proj(proj="utm",zone=18,ellps="WGS84", south=False)
+        outProj = Proj(init='epsg:5070')
+
+        print("(ul_x, ul_y): ", (ul_x, ul_y))
+        (ul_x, ul_y) = transform(inProj,outProj,ul_x,ul_y)
+        print("after (ul_x, ul_y): ", (ul_x, ul_y))
+
+        print("(lr_x, lr_y): ", (lr_x, lr_y))
+        (lr_x, lr_y) = transform(inProj,outProj,lr_x,lr_y)
+        print("after (lr_x, lr_y): ", (lr_x, lr_y))
+
     return (ul_x, ul_y, lr_x, lr_y)
 
 def main():

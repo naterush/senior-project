@@ -223,7 +223,7 @@ def get_prediction_map(model_filepath, satellite_jpg_filepath, metadata_filepath
             jpg_x = int(((x / max_x)*jpg_width))
             jpg_y = int(((y / max_y)*jpg_height))
             pixel = rgb_data[jpg_y, jpg_x]
-            if pixel[0] != 0 and pixel[1] != 0 and pixel[2] != 0:
+            if not (pixel[0] == 0 and pixel[1] == 0 and pixel[2] == 0):
                 pixel_square = rgb_data[jpg_y-pixel_radius:jpg_y+pixel_radius,
                                  jpg_x-pixel_radius:jpg_x+pixel_radius]
 
@@ -242,13 +242,13 @@ def get_prediction_map(model_filepath, satellite_jpg_filepath, metadata_filepath
     print("Black percentage: " + str(((max_x*max_y) - row_num)/(max_x*max_y)))
     return prediction_map
 
-def find_changes(region1, region2, grid_size=60, thresh_pct=0):
+def find_changes(region1, region2, grid_size=60, thresh_pct=0.5):
     change_map = np.zeros(region1.shape, dtype=int)
     height = region1.shape[0]
     width = region1.shape[1]
-    pixels_per_square = (height//grid_size) * (width//grid_size)
+    pixels_per_square = grid_size * grid_size
     # print(pixels_per_square)
-    thresh = pixels_per_square * 0.50
+    thresh = pixels_per_square * thresh_pct
     for y_top_left in range(0, height, height//grid_size):
         for x_top_left in range(0, width, width//grid_size):
             r1_square = region1[y_top_left:y_top_left+grid_size,
@@ -278,7 +278,7 @@ def find_changes(region1, region2, grid_size=60, thresh_pct=0):
                 change_map_region[:, :] = 0
     return change_map
 
-def get_json_changes(change_map, metadata_fp, grid_size=10):
+def get_json_changes(change_map, metadata_fp, grid_size=50):
     # Get bounds
     (ul_x, ul_y, lr_x, lr_y) = get_bounds(metadata_fp)
     width = len(change_map[0])
@@ -403,7 +403,7 @@ def main():
     prediction_map_after = get_prediction_map(model_filepath, after_jpg_filepath, new_scene_metadata, conus_filepath)
 
     print("getting the change map")
-    change_map = find_changes(prediction_map_before, prediction_map_after)
+    change_map = find_changes(prediction_map_before, prediction_map_after, 60, 0.15)
     print("getting the json changes")
     json_changes = get_json_changes(change_map, old_scene_metadata)
 

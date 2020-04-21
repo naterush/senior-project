@@ -245,7 +245,7 @@ class LandsatAPI(object):
             end_date=end_date,
             max_cloud_cover=10
         )
-        print("Number found scenes" + str(len(scenes)))
+        print("Number scenes found: " + str(len(scenes)))
 
         # make the output directory if it doesn't exist
         if not output_folder.exists():
@@ -286,7 +286,7 @@ class Scene():
             return
 
         # We need to extract the text file that ends in ANG.txt
-        # as well as the bands 2, 3, 4, 
+        # as well as the bands 2, 3, 4,
         def to_download(tarinfo):
             name = tarinfo.name
             if name.endswith("ANG.txt"):
@@ -553,7 +553,7 @@ def get_bounds(metadata_filepath):
         lr_x = float(lr_line.split(",")[0])
         lr_y = float(lr_line.split(",")[1])
     return (ul_x, ul_y, lr_x, lr_y)
-    
+
 def main():
     if (len(sys.argv)) != 3:
         print("Usage: python3 main.py <lat> <long>")
@@ -563,7 +563,7 @@ def main():
     lat = float(sys.argv[1])
     lng = float(sys.argv[2])
 
-    print(f"Getting with {lat}, {lng}")
+    print(f"Getting images at coordinates ({lat}, {lng})")
 
     # Download 2 images at these coordinates
     api = LandsatAPI()
@@ -572,8 +572,8 @@ def main():
         lat,
         lng,
         num_scenes=1,
-        start_date="2016-4-1",
-        end_date="2017-1-1"
+        start_date="2016-06-01",
+        end_date="2016-09-01"
     )[0]
 
     # WRS Row Path is the location of the image, which we use as the key to cache computations
@@ -593,8 +593,8 @@ def main():
         lat,
         lng,
         num_scenes=1,
-        start_date="2020-1-1",
-        end_date="2020-4-17"
+        start_date="2019-06-01",
+        end_date="2019-09-01"
     )[0]
     new_scene_metadata = new_scene.metadata_path_str()
     after_jpg_filepath = str(new_scene.folder_path) + '/after_img.jpg'
@@ -662,4 +662,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-

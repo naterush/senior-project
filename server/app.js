@@ -15,7 +15,8 @@ app.set('view engine', 'ejs');
 app.use(express.urlencoded());
 
 async function runModel(lat, long) {
-  const { stdout, stderr } = await exec(`venv/bin/python3 main.py ${lat} ${long}`);
+  // bump buff to 5mb
+  const { stdout, stderr } = await exec(`venv/bin/python3 main.py ${lat} ${long}`, {maxBuffer: 1024 * 5000});
   console.log(stdout, stderr)
 
   if (stderr.length !== 0) {

@@ -92,10 +92,7 @@ class Scene():
         self.folder_path = folder_path
 
     def extract(self):
-        if len(list(self.folder_path.iterdir())) > 2:
-            # we don't need to do anything if this was already extracted
-            print("Already extracted! Returning.")
-            return
+        
 
         # We need to extract the text file that ends in ANG.txt
         # as well as the bands 4, 5, 6
@@ -112,7 +109,14 @@ class Scene():
             return False
 
         # extract the tar file
-        tar_file = list(x for x in self.folder_path.iterdir() if x.suffix == ".gz")[0]
+        tar_files = list(x for x in self.folder_path.iterdir() if x.suffix == ".gz")
+
+        if not any(tar_files):
+            # we don't need to do anything if this was already extracted
+            print("Already extracted! Returning.")
+            return
+        
+        tar_file = tar_files[0]
         with tarfile.open(tar_file, "r:gz") as mytar:
             print([m for m in mytar.getmembers() if to_download(m)])
             mytar.extractall(path=self.folder_path, members=[m for m in mytar.getmembers() if to_download(m)])

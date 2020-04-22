@@ -46,7 +46,7 @@ app.get('/map', async function (req, res) {
 });
 
 app.get('/testtimeout', async function (req, res) {
-
+  req.setTimeout(0) // no timeout
   console.log("STARTING WAITING")
   await new Promise(resolve => setTimeout(resolve, 5 * 60 * 1000));
   console.log("DONE WAITING")
@@ -70,6 +70,3 @@ app.get('/getRegion', async function (req, res) {
 const server = app.listen(3000, () => {
   console.log("Server is running on port 3000");
 });
-
-//Increase the timeout of the server
-server.timeout = 15 * 60 * 1000;

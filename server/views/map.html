@@ -1,51 +1,6 @@
-<!--<!DOCTYPE html>
-<html>
-<head>
-<title>HeatMap</title>
- <script
-        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAhWogeZ5mswxqfmc_ZkG4Ty8DwSx9K2m4&sensor=false&libraries=visualization"
-        type="text/javascript"></script>
-<script>
-var map;
-var heatmapData = [
-new google.maps.LatLng(37.782, -122.447),
-new google.maps.LatLng(36.778261, -119.417932),
-new google.maps.LatLng(-37.814107, 144.96328),
-new google.maps.LatLng(33.867487, 151.20699),
-/*new google.maps.LatLng(<SPAN id='leftbottomlat'></SPAN>, <SPAN id='leftbottomlong'></SPAN>),
-new google.maps.LatLng(<SPAN id='rightbottomlat'></SPAN>, <SPAN id='rightbottomlong'></SPAN>),
-new google.maps.LatLng(<SPAN id='lefttoplat'></SPAN>, <SPAN id='lefttoplong'></SPAN>),
-new google.maps.LatLng(<SPAN id='righttoplat'></SPAN>, <SPAN id='righttoplong'></SPAN>),*/
-{ location: new google.maps.LatLng(40.416775, -3.70379), weight: 6 },
-{ location: new google.maps.LatLng(41.385064, 2.173403), weight: 2 },
-{ location: new google.maps.LatLng(52.130661, -3.783712), weight: 2 },
-{ location: new google.maps.LatLng(55.378051, -3.435973), weight: 8 },
-{ location: new google.maps.LatLng(-40.900557, 174.885971), weight: 6 },
-{ location: new google.maps.LatLng(40.714353, -74.005973), weight: 6 }
-];
-function initializeMap() {
-var myMapOptions = {
-zoom: 4,
-center: new google.maps.LatLng(40.785611, -25.94700),
-mapTypeId: google.maps.MapTypeId.ROADMAP
-};
-map = new google.maps.Map(document.getElementById('map'),myMapOptions);
-var heatmap = new google.maps.visualization.HeatmapLayer({
-data: heatmapData,
-dissipating: false,
-map: map
-});
-}
-google.maps.event.addDomListener(window, 'load', initializeMap);
-</script>
-</head>
-<body>
-<div id="map" style="width: 600px; height: 500px;"></div>
-</body>
-</html>-->
 <!DOCTYPE html>
 <html>
-  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+  f<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
   <head>
     <meta charset="utf-8">
     <title>HeatMap</title>
@@ -278,7 +233,7 @@ google.maps.event.addDomListener(window, 'load', initializeMap);
         const data = {"latitude": lat, "longitude": long};
 
         $.ajax({
-          url: "/getRegion",
+          url: "../getRegion",
           data: data,
           success: function(jsonData) {
             // We then filter the data
@@ -288,8 +243,14 @@ google.maps.event.addDomListener(window, 'load', initializeMap);
             console.log(deathPoints)
 
             heatmapGrowth = new google.maps.visualization.HeatmapLayer({
+              data: growth,
+              gradient: g,
+              map: map
+            });
+
+            heatmapDeath = new google.maps.visualization.HeatmapLayer({
               data: deathPoints,
-              gradient: ["red"],
+              gradient: r,
               map: map
             });
 

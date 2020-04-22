@@ -32,23 +32,6 @@ async function runModel(lat, long) {
   return JSON.parse(jsonData);
 }
 
-function getJSONData(latitude, longitude, radius) {
-  // Within a radius of this point, return the heat map results
-  //var coords = JSON.parse(dummyjsonMap);
-  var coords = dummyMap.coordinates;
-  var selected = [];
-  for (c in coords) {
-    if (c.latitude < latitude + radius && 
-      c.latitude > latitude - radius &&
-      c.longitude < longitude + radius &&
-      c.longitude > longitude - radius) {
-        selected.push(c);
-      }
-  }
-
-  return selected;
-}
-
 
 app.get('/', async function (req, res) {
   res.render('sapling.ejs.html');
@@ -65,56 +48,15 @@ app.get('/getRegion', async function (req, res) {
 
   const {latitude, longitude} = req.query;
 
-  console.log(`Got region ${latitude}, ${longitude}`);
+  console.log(`Getting region ${latitude}, ${longitude}. This may take a while`);
 
   const modelJSONResult = await runModel(latitude, longitude);
 
-  console.log(`Got region ${latitude}, ${longitude} : ${modelJSONResult}`);
+  console.log(`Returning result ${latitude}, ${longitude} : ${modelJSONResult}`);
 
   res.json(modelJSONResult);
-
-  return
-
-  //client.getRegionFunction();
-  console.log("Reached");
-  //Take point, radius. Return "map overlay data"
-  //latitude = req.param("LATITUDE");
-  //longitude = req.param("LONGITUDE");
- // radius = req.param("RADIUS");
- latitude = 20;
- longitude = 100;
- radius = 500;
-  // Call some function here on point and radius to return JSON data
-  //jsonData = getJSONData(latitude, longitude, radius);
-  var coords = [];
-  var leftbottomlat = latitude - radius
-  var leftbottomlong = longitude - radius;
-  var rightbottomlat = latitude + radius;
-  var rightbottomlong = latitude - radius;
-  var lefttoplat = latitude - radius;
-  var lefttoplong = latitude + radius;
-  var righttoplat = latitude + radius;
-  var righttoplong = longitude + radius;
-  res.render('map.html');
-  /*for (d in jsonData) {
-    coords += { location: new google.maps.LatLng(d.latitude, d.longitude), weight: d.weight }
-  }*/
-
-  /*document.getElementById("leftbottomlat").innerHTML = leftbottomlat;
-  document.getElementById("leftbottomlong").innerHTML = leftbottomlong;
-  document.getElementById("rightbottomlat").innerHTML = rightbottomlat;
-  document.getElementById("rightbottomlong").innerHTML = rightbottomlong;
-  document.getElementById("lefttoplat").innerHTML = lefttoplat;
-  document.getElementById("lefttoplong").innerHTML = lefttoplong;
-  document.getElementById("righttoplat").innerHTML = righttoplat;
-  document.getElementById("righttoplong").innerHTML = righttoplong;*/
-  //document.getElementById("coords").innerHTML = coords;
-  //res.json(getJSONData(latitude, longitude, radius));
 });
 
 app.listen(3000, () => {
   console.log("Server is running on port 3000");
 });
-
-
-//module.exports = app;

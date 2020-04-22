@@ -15,7 +15,7 @@ app.set('view engine', 'ejs');
 app.use(express.urlencoded());
 
 async function runModel(lat, long) {
-  const { stdout, stderr } = await exec(`python3 main.py ${lat} ${long}`);
+  const { stdout, stderr } = await exec(`venv/bin/python3 main.py ${lat} ${long}`);
   console.log(stdout, stderr)
 
   if (stderr.length !== 0) {

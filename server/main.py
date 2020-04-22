@@ -373,6 +373,14 @@ class Scene():
 
         img.save(img_path)
 
+        print("Removing bands")
+        # TODO
+        #os.remove(band_2_path)
+        #os.remove(band_3_path)
+        #os.remove(band_4_path)
+
+        # we also delete 
+
     def label(self):
         rgb_array = self.get_rgb_array()
         metadata_filepath = self.metadata_path_str()

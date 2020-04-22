@@ -15,22 +15,20 @@ app.set('view engine', 'ejs');
 app.use(express.urlencoded());
 
 async function runModel(lat, long) {
-  // bump buff to 5mb
-  const { stdout, stderr } = await exec(`venv/bin/python3 main.py ${lat} ${long}`, {maxBuffer: 1024 * 5000});
-  console.log(stdout, stderr)
+  try {
+      const { stdout, stderr } = await exec(`venv/bin/python3 main.py ${lat} ${long}`, {maxBuffer: 1024 * 5000});
 
-  if (stderr.length !== 0) {
-    console.log(`Call to model with ${lat}, ${long} errored with :\n ${stderr}`);
-    return {};
+      const outputArr = stdout.split("\n");
+      const newfile = outputArr[outputArr.length - 2]
+  
+      // Read in the file
+      const jsonData = await fs.readFile(newfile)
+  
+      return JSON.parse(jsonData);
+  } catch (e) {
+      console.log("error getting data", e);
+      return {};
   }
-
-  const outputArr = stdout.split("\n");
-  const newfile = outputArr[outputArr.length - 2]
-
-  // Read in the file
-  const jsonData = await fs.readFile(newfile)
-
-  return JSON.parse(jsonData);
 }
 
 app.get('/', async function (req, res) {
@@ -54,7 +52,7 @@ app.get('/getRegion', async function (req, res) {
 
   const modelJSONResult = await runModel(latitude, longitude);
 
-  console.log(`Returning result ${latitude}, ${longitude} : ${modelJSONResult}`);
+  console.log(`Returning result ${latitude}, ${longitude} with : ${modelJSONResult.length} results`);
 
   res.json(modelJSONResult);
 });

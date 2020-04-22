@@ -410,8 +410,6 @@ def main():
         new_scene.extract()
         new_scene.write_img(after_jpg_filepath)
 
-    api.logout()
-
     # Run predictions on both downloaded images
     prediction_map_before = get_prediction_map(model_filepath, before_jpg_filepath, old_scene_metadata, conus_filepath)
     prediction_map_after = get_prediction_map(model_filepath, after_jpg_filepath, new_scene_metadata, conus_filepath)

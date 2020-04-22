@@ -182,10 +182,9 @@ class Scene():
         imsave(img_path, rgb)
 
         print("Removing bands")
-        # TODO
-        #os.remove(band_2_path)
-        #os.remove(band_3_path)
-        #os.remove(band_4_path)
+        os.remove(band_4_path)
+        os.remove(band_5_path)
+        os.remove(band_6_path)
 
         # we also delete 
 

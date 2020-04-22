@@ -47,10 +47,6 @@ app.get('/map', async function (req, res) {
 
 
 app.get('/getRegion', async function (req, res) {
-  // We set a timeout of 15 minutes...
-  // because the model might take a while
-  req.setTimeout(15 * 60 * 1000);
-
   const {latitude, longitude} = req.query;
 
   console.log(`Getting region ${latitude}, ${longitude}. This may take a while`);
@@ -62,6 +58,9 @@ app.get('/getRegion', async function (req, res) {
   res.json(modelJSONResult);
 });
 
-app.listen(3000, () => {
+const server = app.listen(3000, () => {
   console.log("Server is running on port 3000");
 });
+
+//Increase the timeout of the server
+server.timeout = 15 * 60 * 1000;

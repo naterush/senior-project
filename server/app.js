@@ -16,18 +16,23 @@ app.use(express.urlencoded());
 
 async function runModel(lat, long) {
   try {
-      const { stdout, stderr } = await exec(`venv/bin/python3 main.py ${lat} ${long}`, {maxBuffer: 1024 * 5000});
+    console.log("EXECING");
+    const { stdout, stderr } = await exec(`venv/bin/python3 main.py ${lat} ${long}`, {maxBuffer: 1024 * 5000});
+    console.log("DONE EXECING");
 
-      const outputArr = stdout.split("\n");
-      const newfile = outputArr[outputArr.length - 2]
+    const outputArr = stdout.split("\n");
+    const newfile = outputArr[outputArr.length - 2]
+
+    console.log("GOT NEW FILE", newfile)
   
-      // Read in the file
-      const jsonData = await fs.readFile(newfile)
-  
-      return JSON.parse(jsonData);
+    // Read in the file
+    const jsonData = await fs.readFile(newfile)
+    console.log("GOT NEW FILE")
+
+    return JSON.parse(jsonData);
   } catch (e) {
-      console.log("error getting data", e);
-      return {};
+    console.log("error getting data", e);
+    return {};
   }
 }
 

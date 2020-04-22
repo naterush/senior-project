@@ -45,6 +45,15 @@ app.get('/map', async function (req, res) {
   res.render('map.html');
 });
 
+app.get('/testtimeout', async function (req, res) {
+
+  console.log("STARTING WAITING")
+  await new Promise(resolve => setTimeout(resolve, 5 * 60 * 1000));
+  console.log("DONE WAITING")
+  res.status(200).end();
+});
+
+
 
 app.get('/getRegion', async function (req, res) {
   const {latitude, longitude} = req.query;

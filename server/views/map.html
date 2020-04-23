@@ -38,19 +38,41 @@
         top: 10px;
         z-index: 5;
       }
-    </style>
-  </head>
 
-  <body>
-    <div id="floating-panel">
-      <button onclick="toggleHeatmaps()">Toggle Heatmaps</button>
-      <button onclick="toggleDeath()">Toggle Death</button>
-      <button onclick="toggleGrowth()">Toggle Growth</button>
-      <button onclick="buildHeatMap()">Build Heat Map</button>
-      <button onclick="changeOpacity()">Change opacity</button>
-    </div>
-    <div id="map"></div>
-    <script>
+          /* The Modal (background) */
+  .modal {
+    display: none; /* Hidden by default */
+    position: fixed; /* Stay in place */
+    z-index: 1; /* Sit on top */
+    left: 0;
+    top: 0;
+    width: 100%; /* Full width */
+    height: 100%; /* Full height */
+    overflow: auto; /* Enable scroll if needed */
+    background-color: rgb(0,0,0); /* Fallback color */
+    background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+  }
+
+  /* Modal Content/Box */
+  .modal-content {
+    background-color: #fefefe;
+    margin: 15% auto; /* 15% from the top and centered */
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%; /* Could be more or less, depending on screen size */
+  }
+
+  /* The Close Button */
+  .close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+  }
+
+    </style>
+
+       <script>
 
       // This example requires the Visualization library. Include the libraries=visualization
       // parameter when you first load the API. For example:
@@ -247,6 +269,41 @@
             }
         });*/
       }
+
+      function wildfiresButtonPress() {
+
+          var wildfireOptions = {
+            center: new google.maps.LatLng(37.55261717446411, -120.80429614812023),
+            zoom: 6
+          };
+
+          map.setOptions(wildfireOptions);
+
+          var modal = document.getElementById("wildfire-modal");
+          modal.style.display = "block";
+    }
+
+      
+      //close wildfire modal
+      function wildfireClose() {
+      var modal = document.getElementById("wildfire-modal");
+      modal.style.display = "none";
+
+
+      }
+
+      function loadData() {
+        var modal = document.getElementById("loading-modal");
+        modal.style.display = "block";
+
+      }
+
+      function loadClose() {
+        var modal = document.getElementById("loading-modal");
+        modal.style.display = "none";
+
+      }
+
 
       function changeOpacity() {
         heatmapGrowth.set('opacity', heatmapGrowth.get('opacity') ? null : 0.2);
@@ -912,10 +969,53 @@
         ];
         }
       }*/
+
+
     </script>
+      <!-- California Wildfire Modal -->
     <script async defer
         src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAhWogeZ5mswxqfmc_ZkG4Ty8DwSx9K2m4&libraries=visualization&callback=initMap"
         type="text/javascript">
     </script>
+  </head>
+
+  <body>
+    <div id="floating-panel">
+      <button onclick="toggleHeatmaps()">Toggle Heatmaps</button>
+      <button onclick="toggleDeath()">Toggle Death</button>
+      <button onclick="toggleGrowth()">Toggle Growth</button>
+      <button onclick="buildHeatMap()">Build Heat Map</button>
+      <button onclick="changeOpacity()">Change Opacity</button>
+      <button onclick="wildfiresButtonPress()">California Wildfires</button>
+       <button onclick="loadData()">Loading</button>
+    </div>
+    <div id="wildfire-modal" class="modal">
+
+  <!-- Modal content -->
+  <div class="modal-content">
+    <span class="close" onclick="wildfireClose()">&times;</span>
+    <h1>The Walker Fire</h1>
+    <p>
+  Wildfires in California have burned more frequently and across greater areas for the last few years. The Walker fire is one of the more severe incidents, and was first reported on September 4th, 2019. It was 100% contained by September 25th, 2019. In this time, it burned around 54,600 acres.</p>
+  <p>
+  Click <a href="/walker">here</a> to learn more about the Walker Fire and find out what you can do to help fight climate change.
+  </p> 
+  <p>
+  Click <a href="/evalationMetrics">here</a> to view Sapling's evaluation metrics for this interesting case study.
+  </p> 
+  </div>
+
+</div>
+
+<div id="loading-modal" class="modal">
+  <span class="close" onclick="loadClose()">&times;</span>
+  <div class="modal-content">
+      <h1>Loading...</h1>
+      <h2>This could take some time, and we appreciate your patience :)</h2>
+  </div>
+</div>
+
+    <div id="map"></div>
+ 
   </body>
 </html>

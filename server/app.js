@@ -42,6 +42,9 @@ app.get('/map', async function (req, res) {
   res.render('map.html');
 });
 
+app.get('/walker', async function (req, res) {
+  res.render('walker.html');
+});
 
 app.get('/getRegion', async function (req, res) {
   // We set a timeout of 15 minutes...

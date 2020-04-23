@@ -40,6 +40,7 @@ app.get('/', async function (req, res) {
   res.render('index.html');
 });
 
+app.use("/images", express.static('views/images'))
 
 app.get('/map', async function (req, res) {
   res.render('map.html');

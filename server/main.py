@@ -92,10 +92,7 @@ class Scene():
         self.folder_path = folder_path
 
     def extract(self):
-        if len(list(self.folder_path.iterdir())) > 2:
-            # we don't need to do anything if this was already extracted
-            print("Already extracted! Returning.")
-            return
+        
 
         # We need to extract the text file that ends in ANG.txt
         # as well as the bands 4, 5, 6
@@ -112,7 +109,14 @@ class Scene():
             return False
 
         # extract the tar file
-        tar_file = list(x for x in self.folder_path.iterdir() if x.suffix == ".gz")[0]
+        tar_files = list(x for x in self.folder_path.iterdir() if x.suffix == ".gz")
+
+        if not any(tar_files):
+            # we don't need to do anything if this was already extracted
+            print("Already extracted! Returning.")
+            return
+        
+        tar_file = tar_files[0]
         with tarfile.open(tar_file, "r:gz") as mytar:
             print([m for m in mytar.getmembers() if to_download(m)])
             mytar.extractall(path=self.folder_path, members=[m for m in mytar.getmembers() if to_download(m)])
@@ -181,7 +185,7 @@ class Scene():
         del band_4_arr, band_5_arr, band_6_arr
         imsave(img_path, rgb)
 
-        print("Removing bands")
+        # Delete these images, for space reasons
         os.remove(band_4_path)
         os.remove(band_5_path)
         os.remove(band_6_path)
@@ -387,10 +391,12 @@ def main():
         print(f"output/{WRS_ROW_PATH}.txt")
         exit(0)
 
-    old_scene_metadata = old_scene.metadata_path_str()
     before_jpg_filepath = str(old_scene.folder_path) + '/before_img.jpg'
-    print("Saving before image")
-    old_scene.write_img(before_jpg_filepath)
+    old_scene_metadata = old_scene.metadata_path_str()
+    if not os.path.exists(before_jpg_filepath):
+        print("Saving before image")
+        old_scene.extract()
+        old_scene.write_img(before_jpg_filepath)
 
     print("Downloading the 2019 scene...")
     new_scene = api.download(
@@ -400,10 +406,13 @@ def main():
         start_date="2019-06-01",
         end_date="2019-10-15"
     )[0]
-    new_scene_metadata = new_scene.metadata_path_str()
+
     after_jpg_filepath = str(new_scene.folder_path) + '/after_img.jpg'
-    print("Saving after image")
-    new_scene.write_img(after_jpg_filepath)
+    new_scene_metadata = new_scene.metadata_path_str()
+    if not os.path.exists(after_jpg_filepath):
+        print("Saving after image")
+        new_scene.extract()
+        new_scene.write_img(after_jpg_filepath)
 
     # Run predictions on both downloaded images
     prediction_map_before = get_prediction_map(model_filepath, before_jpg_filepath, old_scene_metadata, conus_filepath)

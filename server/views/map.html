@@ -215,30 +215,37 @@
         const data = {"latitude": latitude, "longitude": longitude};
         console.log("Building heat map", data);
 
-        var output = [{"latitude": "41.42736481525975", "longitude": "-122.38341315288952", "color": "GREEN", "weight": "5"}, {"latitude": "41.298457652768555", "longitude": "-122.3339274546257", "color": "GREEN", "weight": "5"}, {"latitude": "41.32553955735241", "longitude": "-120.84394826195779", "color": "RED", "weight": "5"}, {"latitude": "41.36009032022727", "longitude": "-120.66922233989118", "color": "RED", "weight": "5"}, {"latitude": "41.196067618298535", "longitude": "-120.79734948535376", "color": "RED", "weight": "5"}, {"latitude": "41.066593637262585", "longitude": "-120.75092122488137", "color": "RED", "weight": "5"}, {"latitude": "40.9025312378864", "longitude": "-120.87832916770424", "color": "RED", "weight": "5"}, {"latitude": "40.93711695411827", "longitude": "-120.7046625683524", "color": "RED", "weight": "5"}, {"latitude": "40.7731176728925", "longitude": "-120.83194517004728", "color": "RED", "weight": "5"}, {"latitude": "40.807636912612516", "longitude": "-120.65857260990943", "color": "RED", "weight": "5"}, {"latitude": "40.64369966537385", "longitude": "-120.78572987761225", "color": "RED", "weight": "5"}, {"latitude": "40.67815286029802", "longitude": "-120.6126504499726", "color": "RED", "weight": "5"}, {"latitude": "40.384847745550175", "longitude": "-120.69380182661035", "color": "RED", "weight": "5"}, {"latitude": "40.41917013208627", "longitude": "-120.52130595836975", "color": "RED", "weight": "5"}, {"latitude": "40.255412553650544", "longitude": "-120.64808729256045", "color": "RED", "weight": "5"}, {"latitude": "40.28967016973204", "longitude": "-120.47588185845946", "color": "RED", "weight": "5"}, {"latitude": "40.12597035991095", "longitude": "-120.60253791266344", "color": "RED", "weight": "5"}, {"latitude": "39.867062446020164", "longitude": "-120.51193113108434", "color": "RED", "weight": "5"}, {"latitude": "39.73759547381622", "longitude": "-120.46687200218805", "color": "RED", "weight": "5"}];
+        $.ajax({
+          url: "/getRegion",
+          data: data,
+          error: function(error) {
+            console.log("ERRORED WITH ", error);
+          },
+          success: function(output) {
+                // We then filter the data
+              const growthPoints = getGrowthPoints(output);
+              const deathPoints = getDeathPoints(output);
 
+              console.log(deathPoints)
 
-        const growthPoints = getGrowthPoints(output);
-        const deathPoints = getDeathPoints(output);
+              if (heatmapGrowth || heatmapDeath) {
+                heatmapGrowth.setMap(null);
+                heatmapDeath.setMap(null);
+              }
+              
 
-        console.log(deathPoints)
+              heatmapGrowth = new google.maps.visualization.HeatmapLayer({
+                    data: growthPoints,
+                    gradient: g,
+                    map: map
+              });
 
-        if (heatmapGrowth || heatmapDeath) {
-          heatmapGrowth.setMap(null);
-          heatmapDeath.setMap(null);
-        }
-        
-
-        heatmapGrowth = new google.maps.visualization.HeatmapLayer({
-              data: growthPoints,
-              gradient: g,
-              map: map
-        });
-
-        heatmapDeath = new google.maps.visualization.HeatmapLayer({
-          data: deathPoints,
-          gradient: r,
-          map: map
+              heatmapDeath = new google.maps.visualization.HeatmapLayer({
+                data: deathPoints,
+                gradient: r,
+                map: map
+              });
+            }
         });
 
 

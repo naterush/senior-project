@@ -247,34 +247,6 @@
               });
             }
         });
-
-
-        /*$.ajax({
-          url: "/getRegion",
-          data: data,
-          
-          success: function(jsonData) {
-            // We then filter the data
-
-            const growthPoints = getGrowthPoints(jsonData);
-            const deathPoints = getDeathPoints(jsonData);
-
-            console.log(deathPoints)
-
-            heatmapGrowth = new google.maps.visualization.HeatmapLayer({
-              data: growth,
-              gradient: g,
-              map: map
-            });
-
-            heatmapDeath = new google.maps.visualization.HeatmapLayer({
-              data: deathPoints,
-              gradient: r,
-              map: map
-            });
-
-            }
-        });*/
       }
 
       function wildfiresButtonPress() {
@@ -1018,7 +990,7 @@
   <span class="close" onclick="loadClose()">&times;</span>
   <div class="modal-content">
       <h1>Loading...</h1>
-      <h2>This could take some time, and we appreciate your patience :)</h2>
+      <h2>This could take some time, and we really appreciate your patience :)</h2>
   </div>
 </div>
 

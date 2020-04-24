@@ -28,15 +28,8 @@
         font-family: 'Roboto','sans-serif';
         line-height: 30px;
         padding-left: 10px;
-      }
-      #floating-panel {
-        background-color: #fff;
-        border: 1px solid #999;
-        left: 25%;
-        padding: 5px;
-        position: absolute;
-        top: 10px;
-        z-index: 5;
+        background-color: #7A9431;
+        border-radius: 5px;
       }
 
           /* The Modal (background) */
@@ -49,16 +42,18 @@
     width: 100%; /* Full width */
     height: 100%; /* Full height */
     overflow: auto; /* Enable scroll if needed */
+    border-radius: 5px;
     background-color: rgb(0,0,0); /* Fallback color */
     background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
   }
 
   /* Modal Content/Box */
   .modal-content {
-    background-color: #fefefe;
+    background-color: #7A9431;
     margin: 15% auto; /* 15% from the top and centered */
     padding: 20px;
     border: 1px solid #888;
+    border-radius: 5px;
     width: 80%; /* Could be more or less, depending on screen size */
   }
 
@@ -261,7 +256,6 @@
           });
 
           // Load Preset
-          loadData();
           setClick(38.792458, -122.780053);
           buildHeatMap();
 
@@ -278,7 +272,6 @@
           });
 
           // Load Preset
-          loadData();
           setClick(40.053, -120.669);
           buildHeatMap();
 
@@ -349,59 +342,46 @@
 
   <body>
     <div id="floating-panel">
-      <button onclick="toggleHeatmaps()">Toggle Heatmaps</button>
       <button onclick="toggleDeath()">Toggle Death</button>
       <button onclick="toggleGrowth()">Toggle Growth</button>
       <button onclick="buildHeatMap()">Build Heat Map</button>
-      <button onclick="changeOpacity()">Change Opacity</button>
       <button onclick="walkerButtonPress()">The Walker Wildfire</button>
       <button onclick="kincadeButtonPress()">The Kincade Wildfire</button>
       <button onclick="document.location = '/'">Return to Homepage</button>
-       <button onclick="loadData()">Loading</button>
     </div>
     <div id="walker-modal" class="modal" position= "front">
+      <!-- Modal content -->
+      <div class="modal-content">
+        <span class="close" onclick="walkerClose()">&times;</span>
+        <h1>The Walker Fire</h1>
+        <p>
+        The Walker Fire heatmap is loading. Click <a href="/walker" target="_blank">here</a> if you want to read more about the fire while this loads. <br/> <br/>
 
-  <!-- Modal content -->
-  <div class="modal-content">
-    <span class="close" onclick="walkerClose()">&times;</span>
-    <h1>The Walker Fire</h1>
-    <p>
-  Wildfires in California have burned more frequently and across greater areas for the last few years. The Walker fire is one of the more severe incidents, and was first reported on September 4th, 2019. It was 100% contained by September 25th, 2019. In this time, it burned around 54,600 acres.</p>
-  <p>
-  Click <a href="/walker">here</a> to learn more about the Walker Fire and find out what you can do to help fight climate change.
-  </p> 
-  <p>
-  Click <a href="/evalationMetrics">here</a> to view Sapling's evaluation metrics.
-  </p> 
-  </div>
-
-</div>
+        Wildfires in California have burned more frequently and across greater areas for the last few years. The Walker fire is one of the more severe incidents, and was first reported on September 4th, 2019. It was 100% contained by September 25th, 2019. In this time, it burned around 54,600 acres.
+        </p>
+      </div>
+    </div>
 
     <div id="kincade-modal" class="modal" position= "front">
+      <!-- Modal content -->
+      <div class="modal-content">
+        <span class="close" onclick="kincadeClose()">&times;</span>
+        <h1>The Kincade Fire</h1>
+        <p>
+        The Kincade Fire heatmap is loading. Click <a href="/kincade" target="_blank">here</a> if you want to read more about the fire while this loads.  <br/> <br/>
 
-  <!-- Modal content -->
-  <div class="modal-content">
-    <span class="close" onclick="kincadeClose()">&times;</span>
-    <h1>The Kincade Fire</h1>
-    <p>
-  Wildfires in California have burned more frequently and across greater areas for the last few years. The Kincade fire is one of the more severe incidents, and was first reported on October 23rd, 2019. It was 100% contained by November 6th, 2019. In this time, it burned around 77,758 acres.</p>
-  <p>
-  Click <a href="/kincade">here</a> to learn more about the Kincade Fire and find out what you can do to help fight climate change.
-  </p> 
-  <p>
-  Click <a href="/evalationMetrics">here</a> to view Sapling's evaluation metrics.
-  </p> 
-  </div>
+        Wildfires in California have burned more frequently and across greater areas for the last few years. The Kincade fire is one of the more severe incidents, and was first reported on October 23rd, 2019. It was 100% contained by November 6th, 2019. In this time, it burned around 77,758 acres.</p>
+      </p>
+      </div>
+    </div>
 
-</div>
-
-<div id="loading-modal" class="modal">
-  <span class="close" onclick="loadClose()">&times;</span>
-  <div class="modal-content">
-      <h1>Loading...</h1>
-      <h2>This could take some time, and we really appreciate your patience :)</h2>
-  </div>
-</div>
+    <div id="loading-modal" class="modal">
+      <span class="close" onclick="loadClose()">&times;</span>
+      <div class="modal-content">
+          <h1>Loading...</h1>
+          <h2>This could take some time, and we really appreciate your patience :)</h2>
+      </div>
+    </div>
 
     <div id="map"></div>
  

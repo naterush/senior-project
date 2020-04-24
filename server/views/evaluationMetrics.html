@@ -1,0 +1,196 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+	<title>Evaluation Metrics</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-15" />
+	<style>
+		body {
+			font-family:Verdana, Arial, Helvetica, sans-serif;
+			font-size: 0.8em;
+			margin: 0;
+			padding: 0;
+			background-color:#182801;
+		}
+
+		.conteneur {
+			margin-top: 10px;
+			position: absolute;
+			width: 740px;
+			left: 50%;
+			margin-left: -370px;
+			border:0px solid #182801;
+			color: #182801;
+			background-color:#7A9431;
+		}
+
+
+		.header {
+			background-image: url("images/header.jpg");
+			background-repeat: no-repeat;
+			height:160px;
+			padding-left:50px;
+			padding-top:40px;
+			max-width:490px;
+			border-bottom:1px solid #182801;
+			color: #F5F8EF;
+		}
+
+		.menu {
+			float:right;
+			margin: 0px;
+			padding:0px;
+			margin-left:20px;
+			border-left:1px solid #182801;
+		}
+
+
+		* html .menu {
+			margin-left: -3px;
+		}
+
+		.centre {
+			padding:20px;
+			padding-left:40px;
+		}
+
+		.pied {
+			height: 25px;
+			text-align:right;
+			padding-right:10px;
+		}
+
+		.menu-list {
+			list-style-type: none;
+			margin:0px 0px 0px 0px;
+			padding:0px;
+		}
+
+		* html .menu li{
+			margin-bottom:-3px;
+		}
+
+		.menu li {
+			margin:0px;
+			border-bottom:1px solid #182801;
+			color: #D9CEB8;
+			font-size: 1.1em;
+			text-decoration: none;
+			background-color:#748F02;
+			padding:0px;
+			width:199px;
+		}
+
+		.menu li a {
+			margin:0px;
+			display: block;
+			color: #F5F8EF;
+			font-size: 1.1em;
+			text-decoration: none;
+			border-left:5px solid #F5F8EF;
+			padding:5px;
+		}
+
+		.menu li a:hover {
+			text-decoration: none;
+			background-color:#90A000;
+		}
+
+		.p{
+			
+		}
+
+		h2{
+			margin-left:-20px;
+			margin-top:15px;
+			padding-left:5px;
+			font-size: 1.3em;
+			color: #F5F8EF;
+			font-weight:normal;
+		}
+
+		h1{
+			margin-left:-30px;
+			margin-top:5px;
+			padding-left:5px;
+			font-size: 1.6em;
+			color: #F5F8EF;
+			font-weight:normal;
+		}
+
+		.header-title {
+			font-size:2.3em;
+			border-top:2px solid #F5F8EF;
+		}
+
+		.header-title-two {
+			font-size:1.1em;
+			padding-bottom:3px;
+			border-bottom:1px solid #F5F8EF;
+		}
+
+		a{
+			color:#F5F8EF;
+			text-decoration:none;
+		}
+
+		a:hover{
+			text-decoration:underline;
+		}
+
+		blockquote{
+			background-color:rgb(142, 168, 69);
+			padding : 3px;
+			border-left:2px solid #F5F8EF;
+		}
+
+		img {
+		  width: 100%;
+		}
+
+
+
+	</style>
+</head>
+
+<body>
+
+	<div class="conteneur">
+		
+		<div class="menu">
+			<ul class="menu-list">
+				<li><a href="/">Home</a></li> 
+				<li><a href="/map">Sapling Map</a></li> 
+        		<li><a href="/walker">The Walker Fire</a></li> 
+        		<li><a href="/kincade">The Kincade Fire</a></li> 
+			</ul>
+		</div>
+
+		<div class="header">
+			<span class="header-title">Sapling</span><br />
+			<span class="header-title-two">Automating Forest Lifecycle Understanding</span>
+		</div>
+
+		<div class="centre">
+			<h1>Evaluation Metrics</h1>
+			<h2>Website Load-times</h2>
+			<img src="images/loadTimes.png">
+ 			<p>Using a tool called Pingdom, which is a website speed test to find page load time, analyze it, and find bottlenecks, we found the load time and performance grade of our static web pages. Our landing page had a load time of 158 ms, which is considered excellent, whereas our map page had a load time of 349 ms, which is still within an acceptable range, and comparable to the load time of Google Maps.</p>
+ 			<h2>Model Runtime Per Step</h2>
+			<img src="images/runtimePerStep.png">
+ 			<p>This metric tests the runtime of just our model at the granularity of each step. We used basic python timing tools to run the model five times in different locations and record the average time that each step took. Within the total average runtime of 21.4 minutes, about 70% of this time is spend within the download step, where the network is the limiting factor. The final change map and JSON output conversion steps take up another 20% of the runtime, but are configurable to run faster at a lower resolution. </p>
+ 			<h2>Model Accuracy</h2>
+			<img src="images/accuracy.png">
+ 			<p>We evaluated the use of two models on their accuracy. The accuracy of the models is defined here to be the number of correct predictions of tree/no tree normalized by the number of total predictions. We calculated this by testing the model on 5 randomly selected regions in the western and eastern U.S, with the model performing noticeably better in the Western U.S. than the Eastern U.S. This may have been due to biases in our training datasets.</p>
+ 			<h2>Concurrent Requests Response Time</h2>
+			<img src="images/requestsResponseTime.png">
+ 			<p>This metric shows how the full system responds to multiple users requesting new data at once. To test this, we had varying numbers of users simultaneously make un-cached requests to the server, timed how long each request took, and then averaged the response time. The average response time increases by almost 1.5x when there are 4 concurrent requests vs. 1. Furthermore above 4 or more requests to the server simultaneously result in increased error rates and timeouts.</p>
+ 			<h2>Cache vs. No Cache</h2>
+			<img src="images/cacheNoCache.png">
+ 			<p>This metric represents the speedup of the building of the heatmap that comes from caching the computed growth/death predictions. Without a cache, the runtime is the same as the runtime of the model (21.4 minutes), but upon adding a cache (and once the data is added to the cache), the heatmap can be built in about 12 seconds, which is a speedup of about 100x.</p>
+		</div>
+
+	</div>
+	  
+</body>
+</html>

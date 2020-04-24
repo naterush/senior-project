@@ -1,0 +1,249 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+	<title>The Kincade Fire</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-15" />
+	<style>
+		body {
+			font-family:Verdana, Arial, Helvetica, sans-serif;
+			font-size: 0.8em;
+			margin: 0;
+			padding: 0;
+			background-color:#182801;
+		}
+
+		.conteneur {
+			margin-top: 10px;
+			position: absolute;
+			width: 740px;
+			left: 50%;
+			margin-left: -370px;
+			border:0px solid #182801;
+			color: #182801;
+			background-color:#7A9431;
+		}
+
+
+		.header {
+			background-image: url("images/fire2.png");
+			background-repeat: no-repeat;
+			height:160px;
+			padding-left:50px;
+			padding-top:40px;
+			max-width:490px;
+			border-bottom:1px solid #182801;
+			color: #F5F8EF;
+		}
+
+		.menu {
+			float:right;
+			margin: 0px;
+			padding:0px;
+			margin-left:20px;
+			border-left:1px solid #182801;
+		}
+
+
+		* html .menu {
+			margin-left: -3px;
+		}
+
+		.centre {
+			padding:20px;
+			padding-left:40px;
+		}
+
+		.pied {
+			height: 25px;
+			text-align:right;
+			padding-right:10px;
+		}
+
+		.menu-list {
+			list-style-type: none;
+			margin:0px 0px 0px 0px;
+			padding:0px;
+		}
+
+		* html .menu li{
+			margin-bottom:-3px;
+		}
+
+		.menu li {
+			margin:0px;
+			border-bottom:1px solid #182801;
+			color: #D9CEB8;
+			font-size: 1.1em;
+			text-decoration: none;
+			background-color:#748F02;
+			padding:0px;
+			width:199px;
+		}
+
+		.menu li a {
+			margin:0px;
+			display: block;
+			color: #F5F8EF;
+			font-size: 1.1em;
+			text-decoration: none;
+			border-left:5px solid #F5F8EF;
+			padding:5px;
+		}
+
+		.menu li a:hover {
+			text-decoration: none;
+			background-color:#90A000;
+		}
+
+		.p{
+			
+		}
+
+		h2{
+			margin-left:-20px;
+			margin-top:15px;
+			padding-left:5px;
+			font-size: 1.3em;
+			color: #F5F8EF;
+			font-weight:normal;
+		}
+
+		h1{
+			margin-left:-30px;
+			margin-top:5px;
+			padding-left:5px;
+			font-size: 1.6em;
+			color: #F5F8EF;
+			font-weight:normal;
+		}
+
+		.header-title {
+			font-size:2.3em;
+			border-top:2px solid #F5F8EF;
+		}
+
+		.header-title-two {
+			font-size:1.1em;
+			padding-bottom:3px;
+			border-bottom:1px solid #F5F8EF;
+		}
+
+		a{
+			color:#F5F8EF;
+			text-decoration:none;
+		}
+
+		a:hover{
+			text-decoration:underline;
+		}
+
+		img {
+		  width: 100%;
+		}
+
+		blockquote{
+			background-color:rgb(142, 168, 69);
+			padding : 3px;
+			border-left:2px solid #F5F8EF;
+		}
+
+
+	</style>
+</head>
+
+<body>
+
+	<div class="conteneur">
+		
+		<div class="menu">
+			<ul class="menu-list">
+				<li><a href="/">Home</a></li> 
+				<li><a href="/map">Sapling Map</a></li> 
+        		<li><a href="/walker">The Walker Fire</a></li> 
+        		<li><a href="/evaluationMetrics">Evaluation Metrics</a></li> 
+			</ul>
+		</div>
+
+		<div class="header">
+			<span class="header-title">California Wildfires</span><br />
+			<span class="header-title-two">The Kincade Fire</span>
+		</div>
+
+		<div class="centre">
+			<h1>The Kincade Fire</h1>
+     <p>
+  Wildfires in California have burned more frequently and across greater areas for the last few years. The Kincade fire is one of the more severe incidents, and was first reported on October 23rd, 2019. It was 100% contained by November 6th, 2019. In this time, it burned around 77,758 acres.</p>
+	<p><img src="images/kincade/kincadeCars.png" style="height: 700px">
+		<center>Vehicles passing through a roadway as the Kincade Fire burns through Sonoma County, Calif., on October 25, 2019.</center>
+	</p>
+	<p>
+	The fire was first reported in Plumas National Forest in the early afternoon of September 4th. At this point, it was estimated to cover between 3 and 5 acres. Erratic winds and dry conditions helped it spread to 750 acres by that night. Even with an active response, strong erratic winds and dry conditions grew the fire to cover more than 47,000 acres by September 10th. The fire was 97% contained by September 14th and 100% contained on September 25th. Several structures were destroyed and multiple mandatory evacuation orders issued. Areas of the Plumas National Forest and particular roads remain closed due to the Walker Fire. 
+	</p>
+		<h2>Our Model</h2>
+	<p>
+	Our model managed to accurately predict the disappearance of biomass in the area cooresponding to the burned area in Sonoma County
+
+ Valley.
+		<center>Before:</center>
+		<div class="row">
+ 			<div class="column">
+    			<p><img src="images/kincade/kicadeBefore.png" style="width:100%">
+					<center>Satellite Data of Sonoma County on August 14th, 2019</center>
+					<center class="sub">Provided by Nasa via EarthExplorer</center class="sub">
+				</p>
+  			</div>
+  			<div class="column">
+    			<p><center><img src="images/kincade/modelBefore.jpg" style="padding-top: 29px"></center>
+    				<center class="sub">Black = High Biomass</center class="sub">
+    				<center class="sub">Grey = Low Biomass</center class="sub">
+					<center class="sub" style= "padding-bottom: 19px">White = Water</center class="sub">
+					<center>After processing the data, our model</center>
+					<center>model rendered the above plot of the region.</center>
+					<center>As you can clearly see, the model correctly</center>
+					<center>labeled the area as being high in biomass</center>
+				</p>
+  			</div>
+		</div>
+		From October 23rd to November 6th, 77,758 acres were burned, resulting in a serious loss of biomass in the region.
+		<center>After:</center>
+		<div class="row">
+ 			<div class="column">
+    			<p><img src="images/kincade/kicadeAfter.png" style="width:100%">
+					<center>Satellite Data of the Sonoma County on February 22nd, 2020</center>
+					<center class="sub">Provided by Nasa via EarthExplorer</center class="sub">
+				</p>
+  			</div>
+  			<div class="column">
+    			<p><center><img src="images/kincade/modelAfter.jpg" style="padding-top: 28px"></center>
+    				<center class="sub">Black = High Biomass</center class="sub">
+    				<center class="sub">Grey = Low Biomass</center class="sub">
+					<center class="sub" style= "padding-bottom: 19px">White = Water</center class="sub">
+					<center>After processing the data, our model</center>
+					<center>rendered the above plot of the region. As you</center>
+					<center>can clearly see, the model correctly labeled</center>
+					<center>the area as having lost significant biomass.</center>
+  			</div>
+		</div>
+
+		<h2>How Can You Help?</h2>
+	<p>
+	The federal government and California's state government support the firefighters, but note that "the danger is not over after the flames are put out". They have responded by investigating damaged structures prone to collapse, road damage, and power line dangers. Large organizations like The Red Cross have provided "relief supplies like overnight shelters and recovery support to those impacted" by the recent wildfires. 
+	</p>
+	<p>
+	While fires occur naturally, the recent string of fires in California have spread more aggressively due to the dry conditions. These dry conditions are partially create by anthropogenic climate disruptions. 
+	</p>
+	<p>
+	Future wildfire likelihood can be reduced by firstly handling flammable objects with care while outdoors. improperly handled cigarettes are a common cause of wildfires. Longer term outlook is improved by following sustainable logging practices and any effort to curb the effects of anthropogenic climate change.
+	To learn more, visit <a href="https://www.c2es.org/content/wildfires-and-climate-change/">The Center for Climate and Energy Soltuions</a> 
+	</p>
+	<p>
+	Charity Navigator ranks <a href="https://www.charitynavigator.org/index.cfm?bay=search.summary&orgid=7278&fromlistid=455">The Redwood Empire Food Bank</a>, <a href="https://www.charitynavigator.org/index.cfm?bay=search.summary&orgid=3408&fromlistid=455">California Community Foundation</a>, and <a href="https://www.charitynavigator.org/index.cfm?bay=search.summary&orgid=8013&fromlistid=455">Habitat for Humanity of Greater Los Angeles</a> as some of the best charities for address California wildfires. Please consider donating.</p>
+  </div>
+
+	</div>
+
+
+	  
+</body>
+</html>

@@ -208,8 +208,13 @@
         return death;
       }
 
-      function buildHeatMap() {
-        const data = {"latitude": latitude, "longitude": longitude};
+      function buildHeatMap(latPassed, longPassed) {
+        var data;
+        if (latPassed && longPassed) {
+          data = {"latitude": latPassed, "longitude": longPassed};
+        } else {
+          data = {"latitude": latitude, "longitude": longitude};
+        }
         console.log("Building heat map", data);
 
         if (!preset) {
@@ -264,8 +269,7 @@
           });
 
           // Load Preset
-          setClick(38.792458, -122.780053);
-          buildHeatMap();
+          buildHeatMap(38.792458, -122.780053)
 
           // Popup Modal
           var modal = document.getElementById("kincade-modal");
@@ -278,12 +282,11 @@
         
           map.setOptions({
             zoom: 8,
-            center: {lat:40.053, lng:-120.669}
+            center: {lat:40.0530001, lng:-120.6690001}
           });
 
           // Load Preset
-          setClick(40.053, -120.669);
-          buildHeatMap();
+          buildHeatMap(40.0530001, -120.6690001);
 
           // Popup Modal
           var modal = document.getElementById("walker-modal");

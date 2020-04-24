@@ -78,20 +78,10 @@
       var heatmapGrowth; // Heat Map for tree growth
       var heatmapDeath; // Heat Map for tree death
       var crosshair; // Variable to toggle the mouse cursor
-      var secondInitial;    // Second point when selecting a region while dragging
-      var secondFinal;      // Second point when selecting a region once mouse is released
-      var boundingBox;      // The boundingBox we will draw while a user is selecting a region
-      var bounds;           // Bounds of bounding box
-      var sw;               // South east corner of bounding box
-      var ne;               // North west corner of bounding box
-      var rectN;            // North edge of bounding box
-      var rectS;            // South edge of bounding box
-      var rectE;            // East edge of bounding box
-      var rectW;            // West edge of bounding box
-      var rect;             // Bounding box
       var latitude; //lat
       var longitude; //long
       var radius;
+      var preset;
 
       var g = new Array(
           'rgba(183, 255, 191, 0)',
@@ -139,6 +129,8 @@
         google.maps.event.addListener(map, "click", function (event) {
             latitude = event.latLng.lat();
             longitude = event.latLng.lng();
+
+            preset = false;
             console.log( latitude + ', ' + longitude );
             var mark;
 
@@ -215,6 +207,10 @@
         }
         console.log("Building heat map", data);
 
+        if (!preset) {
+          loadData();
+        }
+
         $.ajax({
           url: "/getRegion",
           data: data,
@@ -255,6 +251,8 @@
 
       function kincadeButtonPress() {
 
+          preset = true;
+
           map.setOptions({
             zoom: 8,
             center: {lat:38.792458, lng:-122.780053}
@@ -269,6 +267,8 @@
     }
 
       function walkerButtonPress() {
+
+          preset = true;
         
           map.setOptions({
             zoom: 8,
@@ -290,6 +290,11 @@
         modal.style.display = "none";
       }
 
+      function walkerCloseDisplay() {
+        var modal = document.getElementById("walkClose");
+        modal.style.display = "visable";
+      }
+
       //close kincade modal
       function kincadeClose() {
         var modal = document.getElementById("kincade-modal");
@@ -299,13 +304,15 @@
       function loadData() {
         var modal = document.getElementById("loading-modal");
         modal.style.display = "block";
-
       }
 
       function loadClose() {
         var modal = document.getElementById("loading-modal");
         modal.style.display = "none";
-
+        modal = document.getElementById("walkClose");
+        modal.style.display = "block";
+        modal = document.getElementById("kincClose");
+        modal.style.display = "block";
       }
 
       function changeOpacity() {
@@ -362,6 +369,7 @@
 
         Wildfires in California have burned more frequently and across greater areas for the last few years. The Walker fire is one of the more severe incidents, and was first reported on September 4th, 2019. It was 100% contained by September 25th, 2019. In this time, it burned around 54,600 acres.
         </p>
+        <button id="walkClose" onclick="walkerClose()" style="display:none">Close</button>
       </div>
     </div>
 
@@ -375,12 +383,13 @@
 
         Wildfires in California have burned more frequently and across greater areas for the last few years. The Kincade fire is one of the more severe incidents, and was first reported on October 23rd, 2019. It was 100% contained by November 6th, 2019. In this time, it burned around 77,758 acres.</p>
       </p>
+      <button id="kincClose" onclick="kincadeClose()" style="display:none">Close</button>
       </div>
     </div>
 
     <div id="loading-modal" class="modal">
-      <span class="close" onclick="loadClose()">&times;</span>
       <div class="modal-content">
+      <span class="close" onclick="loadClose()">&times;</span>
           <h1>Loading...</h1>
           <h2>This could take some time, and we really appreciate your patience :)</h2>
       </div>

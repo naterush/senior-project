@@ -42,12 +42,24 @@ app.get('/', async function (req, res) {
 
 app.use("/images", express.static('views/images'))
 
+app.use("/images/kincade", express.static('views/images/kincade'))
+
+app.use("/images/walker", express.static('views/images/walker'))
+
 app.get('/map', async function (req, res) {
   res.render('map.html');
 });
 
 app.get('/walker', async function (req, res) {
   res.render('walker.html');
+});
+
+app.get('/kincade', async function (req, res) {
+  res.render('kincade.html');
+});
+
+app.get('/evaluationMetrics', async function (req, res) {
+  res.render('evaluationMetrics.html');
 });
 
 

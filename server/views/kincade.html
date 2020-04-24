@@ -129,6 +129,19 @@
 			border-bottom:1px solid #F5F8EF;
 		}
 
+		.row {
+			display: flex;
+		}
+
+		.column {
+  			flex: 50%;
+  			padding: 5px;
+		}
+
+		.sub {
+			font-size: 0.8em;
+		}
+
 		a{
 			color:#F5F8EF;
 			text-decoration:none;
@@ -139,7 +152,7 @@
 		}
 
 		img {
-		  width: 100%;
+		  	width: 100%;
 		}
 
 		blockquote{
@@ -148,6 +161,11 @@
 			border-left:2px solid #F5F8EF;
 		}
 
+		center{
+			font-size:1.1em;
+			background-color:rgb(142, 168, 69);
+			padding : 3px;
+		}
 
 	</style>
 </head>
@@ -173,12 +191,12 @@
 		<div class="centre">
 			<h1>The Kincade Fire</h1>
      <p>
-  Wildfires in California have burned more frequently and across greater areas for the last few years. The Kincade fire is one of the more severe incidents, and was first reported on October 23rd, 2019. It was 100% contained by November 6th, 2019. In this time, it burned around 77,758 acres.</p>
+  The Kincade Fire burned 77,758 acres in Sonoma County, California from October 23rd to November 6th, 2019. Unlike the Walker Fire, Kincade threatened over 90,000 structures. It was the largest fire of the 2019 wildfire season.</p>
 	<p><img src="images/kincade/kincadeCars.png" style="height: 700px">
 		<center>Vehicles passing through a roadway as the Kincade Fire burns through Sonoma County, Calif., on October 25, 2019.</center>
 	</p>
 	<p>
-	The fire was first reported in Plumas National Forest in the early afternoon of September 4th. At this point, it was estimated to cover between 3 and 5 acres. Erratic winds and dry conditions helped it spread to 750 acres by that night. Even with an active response, strong erratic winds and dry conditions grew the fire to cover more than 47,000 acres by September 10th. The fire was 97% contained by September 14th and 100% contained on September 25th. Several structures were destroyed and multiple mandatory evacuation orders issued. Areas of the Plumas National Forest and particular roads remain closed due to the Walker Fire. 
+	The fire was first reported from within The Geysers, the world's largest geothermal field. The area was experiencing extreme wind conditions when Kincade started, leading to rapid spread and the eventual destruction or damage of 120 buildings. It also contributed to power outages for residents in large parts of California.
 	</p>
 		<h2>Our Model</h2>
 	<p>
@@ -188,16 +206,16 @@
 		<center>Before:</center>
 		<div class="row">
  			<div class="column">
-    			<p><img src="images/kincade/kicadeBefore.png" style="width:100%">
+    			<p><img src="images/kincade/kincadeBefore.jpg" style="width:100%">
 					<center>Satellite Data of Sonoma County on August 14th, 2019</center>
 					<center class="sub">Provided by Nasa via EarthExplorer</center class="sub">
 				</p>
   			</div>
   			<div class="column">
-    			<p><center><img src="images/kincade/modelBefore.jpg" style="padding-top: 29px"></center>
-    				<center class="sub">Black = High Biomass</center class="sub">
-    				<center class="sub">Grey = Low Biomass</center class="sub">
-					<center class="sub" style= "padding-bottom: 19px">White = Water</center class="sub">
+    			<p><center><img src="images/kincade/modelBefore.jpg" style="padding-top: 14px"></center>
+    				<center class="sub">Gey = High Biomass</center class="sub">
+    				<center class="sub">Black = Low Biomass</center class="sub">
+					<center class="sub" style= "padding-bottom: 10px">White = Water</center class="sub">
 					<center>After processing the data, our model</center>
 					<center>model rendered the above plot of the region.</center>
 					<center>As you can clearly see, the model correctly</center>
@@ -209,22 +227,23 @@
 		<center>After:</center>
 		<div class="row">
  			<div class="column">
-    			<p><img src="images/kincade/kicadeAfter.png" style="width:100%">
+    			<p><img src="images/kincade/kincadeAfter.jpg" style="width:100%">
 					<center>Satellite Data of the Sonoma County on February 22nd, 2020</center>
 					<center class="sub">Provided by Nasa via EarthExplorer</center class="sub">
 				</p>
   			</div>
   			<div class="column">
-    			<p><center><img src="images/kincade/modelAfter.jpg" style="padding-top: 28px"></center>
-    				<center class="sub">Black = High Biomass</center class="sub">
-    				<center class="sub">Grey = Low Biomass</center class="sub">
-					<center class="sub" style= "padding-bottom: 19px">White = Water</center class="sub">
+    			<p><center><img src="images/kincade/modelAfter.jpg" style="padding-top: 0px"></center>
+    				<center class="sub">Grey = High Biomass</center class="sub">
+    				<center class="sub">Black = Low Biomass</center class="sub">
+					<center class="sub" style= "padding-bottom: 0px">White = Water</center class="sub">
 					<center>After processing the data, our model</center>
 					<center>rendered the above plot of the region. As you</center>
 					<center>can clearly see, the model correctly labeled</center>
 					<center>the area as having lost significant biomass.</center>
   			</div>
 		</div>
+
 
 		<h2>How Can You Help?</h2>
 	<p>
